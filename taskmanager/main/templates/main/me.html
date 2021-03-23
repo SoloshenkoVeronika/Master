@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<!-- Browser title -->
+		<title>Visual Analytics</title>
+
+		<!-- Character Encoding -->
+		<meta charset="utf-8">
+
+		<!-- Layout control on mobile browsers -->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+		<!-- Web manifest -->
+		<link rel="manifest" href="app.webmanifest">
+
+		<!-- Apple Web App (fullscreen) when adding to home screen -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+
+		<!-- Window icon file -->
+		<link rel="shortcut icon" href="favicons/favicon.ico">
+		
+		<!-- Stylesheet libraries -->
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/fomantic-ui@2.8.3/dist/semantic.min.css"> <!-- Fomantic -->
+		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Merienda+One"> <!-- Google Fonts -->
+		<link rel="stylesheet" href="styles.css"> <!-- Custom styles -->
+		<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
+		<!-- JavaScript libraries -->
+		<script src="//cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script> <!-- jQuery -->
+		<script src="//cdn.jsdelivr.net/npm/fomantic-ui@2.8.3/dist/semantic.min.js"></script> <!-- Fomantic -->
+
+	</head>
+
+	<body>
+
+		<!-- Main -->
+		<div class="pusher">
+
+			<!-- Center text container -->
+			<div id="main" class="ui text container">
+    
+                <br>
+                <br>
+
+				<!-- Image -->
+                <img class="ui circular bordered centered tiny image" src="images/foto.jpg">
+
+				<!-- Main Header -->
+				<h1 class="ui center aligned header google-font">
+					<div class="sub header">
+                        Student
+                    </div>
+                    Veranika Salashenka
+					<div class="sub header">
+                        Vitebsk, Belarus
+					</div>
+				</h1>
+                
+				<div class="ui basic big segment">
+					<div class="ui horizontal big divider">About me</div>
+                    <p class="gen_inf">
+						I was born in a city that is known as the birthplace of Marc Chagall (a famous representative of the artistic avant-garde of the 20th century).
+                    </p>
+					<p class="gen_inf">
+						In 2015, I left Vitebsk and continued my education in Minsk.
+						In 2019, I graduated from the bachelor's program at the Belarusian State University of Informatics and Radioelectronics and entered the double master's program Belarus-Norway.
+					</p>
+					<p class="gen_inf">
+						Since 2017, I have encountered data visualization, as my work area is a SAP BI consultant.
+						We build data models and visualize the results using SAP BI tools.
+					</p>
+					<p class="ps">
+
+						P.S. If you or someone you know needs a person who knows how to visualize data using SAP tools.
+						Or is there a vacancy for a flight internship, let me know.  I'll be happy to help!!!
+					</p>
+					<p class="gen_inf">
+						<a href="" title="Skype"><i class="fa fa-skype" aria-hidden="true"></i> bvx90bibr</a>
+						<a href="" title="e-mail"><i class="fa fa-envelope-o" aria-hidden="true"></i> bvx90@mail.ru</a>
+					</p>
+                </div>
+                
+				<div class="ui basic big segment">
+                    <div class="ui horizontal big divider">SOME FACTS</div>
+                    <p>
+					<ul>
+						<li>Has been a teacher of computer training courses for the elderly</li>
+						<li>Conducted various events for children and people with disabilities</li>
+						<li>Scholarship holder of the Special Fund of the President of the Republic of Belarus</li>
+
+					</ul>
+					</p>
+					<p>
+						I would like to
+					<ul>
+					<li>learn Norwegian</li>
+					<li>find an Interesting SAP BI project</li>
+					<li>visit Madrid</li>
+					<li>attend a figure skating competition ( I like so much this sport)</li>
+					<li>learn to snowboard</li>
+				</ul>
+					</p>
+
+
+                </div>
+
+                <br>
+				<br>
+			</div>
+		</div>
+
+
+		<!-- Inline JavaScript -->
+		<script>
+
+			// jQuery is ready
+			$(function(){
+				// Load Table of Contents (do not cache)
+				$.get({url: "toc.html", cache: false}).then(function(data){
+				    $("body").prepend(data);
+				});
+			});
+		
+		</script>
+
+	</body>
+</html>

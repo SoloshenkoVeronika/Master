@@ -1,0 +1,24 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+
+{% block content %}
+    <h1>Main</h1>
+    <p>Well!</p>
+    {% if installations %}
+        {% for el in installations %}
+            <div class="alert alert-warning mt-2">
+                <h3>{{ el.title }}</h3>
+                    <p>{{ el.latitude }}</p>
+                    <p>{{ el.longitude }}</p>
+                    <p>{{ el.r_time }}</p>
+
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No</p>
+    {% endif %}
+{% endblock %}

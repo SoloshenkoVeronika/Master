@@ -1,0 +1,23 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+
+{% block content %}
+    <h1>Calc</h1>
+    <p>Nice!</p>
+    <form action="" method="post">
+        {% csrf_token %}
+
+            <label for="grid">Размер сетки: </label>
+            <input id="grid" type="text" name="grid">
+
+        <input type="submit" value="Average time" name="average_time">
+        <input type="submit" value="Worst time" name="worst_time">
+        <input type="submit" value="Risks" name="Risks">
+    </form>
+
+{% endblock %}
+
