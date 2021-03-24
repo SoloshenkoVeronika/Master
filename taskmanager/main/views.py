@@ -69,24 +69,6 @@ def about(request):
 
     return render(request,'main/about.html',{'title':'about','installations': installations,'errvs': errvs})
 
-def create(request):
-    # error = ''
-    # if  request.method == 'POST':
-    #     form = TaskForm(request.POST)
-    #     if form.is_valid():
-    #         form.save()
-    #         return redirect('home')
-    #     else:
-    #         error = 'Form is not valide'
-    #
-    #
-    # form = TaskForm()
-    # context = {
-    #     'form': form,
-    #     'error':error
-    # }
-    return render(request,'main/create.html')
-
 
 def installation(request):
     error = ''
@@ -102,7 +84,8 @@ def installation(request):
     form = InstallationForm()
     context = {
         'form': form,
-        'error':error
+        'error':error,
+        'title':'Installations'
     }
     return render(request,'main/installation.html',context)
 
@@ -120,7 +103,8 @@ def errv(request):
     form = ERRVForm()
     context = {
         'form': form,
-        'error':error
+        'error':error,
+        'title':'ERRV'
     }
     return render(request,'main/errv.html',context)
 
@@ -135,8 +119,7 @@ def calc(request):
             model1(grid)
             model3()
         elif 'Risks' in request.POST:
-            model1(grid)
-            model_risk()
+            return render(request,'main/risk.html')
 
         # print("request=!!!!!!!!!!!!!!!!!",request.POST.get("grid", ""))
         # print("grid_get=",grid)
@@ -162,6 +145,59 @@ def calc(request):
             'form': form
         }
         return render(request,'main/calc.html')
+
+def m_avtime(request):
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!m_risk")
+    if  request.method == 'POST':
+        grid = request.POST.get("grid", "")
+        print("!!!!!!!!!!!!!POST m_avtime",grid)
+        model1(grid)
+        model2()
+        context = {
+            'title': "About"
+        }
+        return render(request,'main/about.html',context)
+    else:
+        context = {
+            'title': "Average time"
+        }
+        return render(request,'main/avtime.html',context)
+
+def m_wstime(request):
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!m_risk")
+    if  request.method == 'POST':
+        grid = request.POST.get("grid", "")
+        print("!!!!!!!!!!!!!POST m_wstime",grid)
+        model1(grid)
+        model3()
+        context = {
+            'title': "About"
+        }
+        return render(request,'main/about.html',context)
+    else:
+        context = {
+            'title': "Worst time"
+        }
+        return render(request,'main/wstime.html',context)
+
+def m_risk(request):
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!m_risk")
+    if  request.method == 'POST':
+        grid = request.POST.get("grid", "")
+        wr = request.POST.get("wr", "")
+        wt = request.POST.get("wt", "")
+        print("!!!!!!!!!!!!!POST m_risk",grid, wr, wt)
+        model1(grid)
+        model_risk(wr,wt)
+        context = {
+            'title': "About"
+        }
+        return render(request,'main/about.html',context)
+    else:
+        context = {
+            'title': "Risk"
+        }
+        return render(request,'main/risk.html',context)
 
 def registerPage(request):
     if request.user.is_authenticated:

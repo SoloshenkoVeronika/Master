@@ -586,7 +586,7 @@ def model3():
     # # errvs = ERRV.objects.filter(id=2)
     # errvs = ERRV.objects.order_by('id')
 
-def model_risk():
+def model_risk(wr,wt):
 
     model = AbstractModel()
 

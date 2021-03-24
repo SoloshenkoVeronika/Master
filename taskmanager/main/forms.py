@@ -8,20 +8,6 @@ class CreateUserForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2']
 
-# class TaskForm(ModelForm):
-#     class Meta:
-#         model = Task
-#         fields = ["title","task"]
-#         widgets = {
-#             "title":TextInput(attrs={
-#                 'class':'form-control',
-#                 'placeholder':"Enter title"
-#         }),
-#             "task":Textarea(attrs={
-#                 'class':'form-control',
-#                 'placeholder':"Enter des"
-#         }),
-#         }
 
 class InstallationForm(ModelForm):
     class Meta:

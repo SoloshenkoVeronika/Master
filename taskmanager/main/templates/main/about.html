@@ -6,17 +6,13 @@
 
 
 {% block content %}
-    <h1>About</h1>
-    <p>Nice!</p>
-
-    <h1>Shop GEO-Test</h1>
+    <h1>Installations</h1>
 
     <form method="post" action="./">
         {% csrf_token %}
         <table>
             {{ form }}
         </table>
-        <input type="submit" value="Search" />
     </form>
     {% if installations %}
     <div class="table-responsive">

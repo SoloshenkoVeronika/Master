@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+
+{% block content %}
+    <h1>Calc</h1>
+    <p>Nice!</p>
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <label for="grid">Grid size: </label>
+        <input id="grid" type="text" name="grid"><br>
+        <input type="submit" value="Worst time" name="worst_time">
+    </form>
+
+{% endblock %}
+
