@@ -124,8 +124,6 @@ def get_pot_position(grid):
     #print(dd)
     return dd
 
-
-
 def get_distance(model, i,j):
     #print(model.xcord_i[i]," ",model.xcord_s[j],", ",model.ycord_i[i]," ",model.ycord_s[j])
     xcord_i_r = model.xcord_i[i]*math.pi/180.
@@ -161,15 +159,10 @@ def t_validate2(model, i,j):
 
 
 def model1(grid):
-    print("model1=", grid)
+    #print("model1=", grid)
     pos_positions = get_pot_position(grid)
-
-    #print("respos",get_pot_position())
-    #for i in pos_position:
     lent_pos_positions = len(pos_positions) - pos_positions.count(None)
-    #print("lent=",lent_pos_positions)
     inst = Installation.objects.all()
-    errv = ERRV.objects.all()
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
     filename = "Model1t.dat"
     FileFullPath = os.path.join(full_path, filename)
@@ -179,9 +172,6 @@ def model1(grid):
             f.write(str(p.get_title())+" ")
         f.write(";\n")
         f.write("set SITE  := ")
-        # for p in errv:
-        #         f.write(str(p.get_title())+" ")
-
         for p in range(lent_pos_positions):
             f.write(str("V"+str(p)))
             f.write(str(" "))
@@ -305,18 +295,49 @@ def model1(grid):
     original = FileFullPath
     filename2 = "Model2t.dat"
     filename3 = "Model3t.dat"
+    filename4 = "Model4tt.dat"
     FileFullPath2 = os.path.join(full_path, filename2)
     target2 = FileFullPath2
     FileFullPath3 = os.path.join(full_path, filename3)
     target3 = FileFullPath3
+    FileFullPath4 = os.path.join(full_path, filename4)
+    target4 = FileFullPath4
     shutil.copyfile(original, target2)
     shutil.copyfile(original, target3)
+    shutil.copyfile(original, target4)
     with open(FileFullPath2, 'a') as f:
         f.write("param vessels_number := " + str(count_errv))
         f.write(";\n")
     with open(FileFullPath3, 'a') as f:
         f.write("param vessels_number := " + str(count_errv))
         f.write(";\n")
+    with open(FileFullPath4, 'w') as f:
+        f.write("set INSTALLATION := ")
+        for p in inst:
+            f.write(str(p.get_title())+" ")
+        f.write(";\n")
+        f.write("set SITE  := ")
+        for p in range(lent_pos_positions):
+            f.write(str("V"+str(p)))
+            f.write(str(" "))
+
+        f.write(";\n")
+        f.write("param radius := 6371;\n")
+        f.write("param coef_from := 1.825;\n")
+        f.write("param average_speed := 17;\n")
+        f.write("param :     arrive_time xcord_i ycord_i  consequence	threat:= \n")
+        for p in inst:
+            f.write(str(p.get_title())+" "+str(p.get_r_time())+"   "+str(p.get_lat())+"   "+str(p.get_lon())+"   "+str(p.get_people())+"   "+str(p.get_c_accident())+"\n")
+        f.write(";\n")
+        f.write("param : 	xcord_s ycord_s:= \n")
+
+        i=0
+        for p in pos_positions:
+            f.write(str("V"+str(i)+" "+(str(pos_positions.__getitem__(i))).replace('[','').replace(']','').replace(',','')+"\n"))
+            i+=1
+            f.write(str(" "))
+
+    print("Done1")
 
 def model2():
     model = AbstractModel()
@@ -435,6 +456,16 @@ def model2():
         for j in instance.SITE:
             f.write(str(instance.y[j].value)+ " ")
         f.write("\n")
+        for j in instance.SITE:
+            if(instance.y[j].value==1):
+                f.write("O_" +str(j)+ " "+str(instance.xcord_s[j])+ " "+str(instance.ycord_s[j])+" 1")
+            f.write("\n")
+        f.write("\n")
+    ERRV.objects.filter(type_solution=202).delete()
+    for j in instance.SITE:
+        if(instance.y[j].value==1):
+            errv = ERRV(title="O2_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=202)
+            errv.save()
 
     print('Done2')
 
@@ -577,6 +608,11 @@ def model3():
                 f.write(str(number_errv))
                 f.write("\n")
             number_errv+=1
+    ERRV.objects.filter(type_solution=203).delete()
+    for j in instance.SITE:
+        if(instance.y[j].value==1):
+            errv = ERRV(title="O3_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=203)
+            errv.save()
 
     filename_resultserrv = "Model1t.sol"
     FileFullPathResults = os.path.join(full_path, filename_resultserrv)
@@ -587,6 +623,32 @@ def model3():
     # errvs = ERRV.objects.order_by('id')
 
 def model_risk(wr,wt):
+
+    filename = "Model4tt.dat"
+    full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
+
+    FileFullPath4 = os.path.join(full_path, filename)
+
+    filename2 = "Model4ttt.dat"
+    FileFullPath42 = os.path.join(full_path, filename2)
+    sep = 'set SITE :='
+
+    # with open(FileFullPath4) as file_in:
+    with open(FileFullPath4,'r+') as fr,open(FileFullPath42,'w') as fw:
+        for line in fr:
+            x = line.find('param : 	xcord_s ycord_s:= ')
+            if(x==-1):
+                fw.write(line)
+            else:
+                fw.write(line[0:x])
+                break
+        fw.truncate()
+
+    with open(FileFullPath42, 'a') as f:
+        f.write("param wr := " + str(wr))
+        f.write(";\n")
+        f.write("param wt := " + str(wt))
+        f.write(";\n")
 
     model = AbstractModel()
 
@@ -705,7 +767,7 @@ def model_risk(wr,wt):
     #     # Something else is wrong
     #     print('Solver Status: ',  result.solver.status)
 
-    print('Done3')
+    print('Done4')
 
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
     filename_results = "Model4t.sol"
@@ -744,6 +806,11 @@ def model_risk(wr,wt):
             number_errv+=1
 
     filename_resultserrv = "Model1t.sol"
+    ERRV.objects.filter(type_solution=204).delete()
+    for j in instance.SITE:
+        if(instance.y[j].value==1):
+            errv = ERRV(title="O4_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.001,type_solution=204)
+            errv.save()
     FileFullPathResults = os.path.join(full_path, filename_resultserrv)
     # with open(FileFullPathResults, 'r') as f:
     #     for x in f:

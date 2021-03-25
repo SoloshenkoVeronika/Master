@@ -64,10 +64,15 @@ def about(request):
         for x in f:
             errvs = ERRV.objects.filter(id=int(x))
     # errvs = ERRV.objects.filter(id=2)
+    errv = ERRV.objects.filter(type_solution=200)
     errvs = ERRV.objects.order_by('id')
     print("===",errvs)
-
-    return render(request,'main/about.html',{'title':'about','installations': installations,'errvs': errvs})
+    context = {
+        'installations': installations,
+        'errvs': errv,
+        'title':'about'
+    }
+    return render(request,'main/about.html',context)
 
 
 def installation(request):
@@ -181,23 +186,35 @@ def m_wstime(request):
         return render(request,'main/wstime.html',context)
 
 def m_risk(request):
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!m_risk")
+
     if  request.method == 'POST':
         grid = request.POST.get("grid", "")
+        model1(grid)
+        installations = Installation.objects.order_by('id')
+        return HttpResponseRedirect('risk2')
+    else:
+        context = {
+            'title': "Risk1"
+        }
+        return render(request,'main/risk.html',context)
+
+def m_risk3(request):
+    if  request.method == 'POST':
         wr = request.POST.get("wr", "")
         wt = request.POST.get("wt", "")
-        print("!!!!!!!!!!!!!POST m_risk",grid, wr, wt)
-        model1(grid)
         model_risk(wr,wt)
+        #installations = Installation.objects.order_by('id')
         context = {
+            #'installations':installations,
             'title': "About"
         }
         return render(request,'main/about.html',context)
     else:
         context = {
-            'title': "Risk"
+            'title': "Risk2"
         }
-        return render(request,'main/risk.html',context)
+        return render(request,'main/risk2.html',context)
+
 
 def registerPage(request):
     if request.user.is_authenticated:

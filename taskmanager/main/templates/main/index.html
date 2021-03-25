@@ -1,24 +1,39 @@
 {% extends 'main/base.html' %}
 
 {% block title %}
-{{ title }}
+    {{ title }}
 {% endblock %}
 
 
 {% block content %}
-    <h1>Main</h1>
-    <p>Well!</p>
-    {% if installations %}
-        {% for el in installations %}
-            <div class="alert alert-warning mt-2">
-                <h3>{{ el.title }}</h3>
-                    <p>{{ el.latitude }}</p>
-                    <p>{{ el.longitude }}</p>
-                    <p>{{ el.r_time }}</p>
+    <div class="bg-image" style="
+background-image: url('https://mdbcdn.b-cdn.net/img/Photos/Others/images/77.jpg');
+height: 50vh; ">
+    </div>
+    <div class="jumbotron">
+        <div class="container">
+            <h6 class="display-4">Decision Support Tool for Positioning Rescue Vessels</h6>
+            <br>
+            <p style="font-size: 1.4em">Using this application, you can determine the optimal positions ofRescue Vessels
+                for a set of offshore platforms, as well as conduct a comparative
+                analysis of the current positings with the proposed solution</p>
+            {#            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more »</a></p>#}
+        </div>
+    </div>
 
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>No</p>
-    {% endif %}
+{#    <h1>Main</h1>#}
+{#    <p>Well!</p>#}
+{#    {% if installations %}#}
+{#        {% for el in installations %}#}
+{#            <div class="alert alert-warning mt-2">#}
+{#                <h3>{{ el.title }}</h3>#}
+{#                <p>{{ el.latitude }}</p>#}
+{#                <p>{{ el.longitude }}</p>#}
+{#                <p>{{ el.r_time }}</p>#}
+{##}
+{#            </div>#}
+{#        {% endfor %}#}
+{#    {% else %}#}
+{#        <p>No</p>#}
+{#    {% endif %}#}
 {% endblock %}

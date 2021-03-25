@@ -11,7 +11,9 @@ urlpatterns = [
     path('register', views.registerPage, name="register"),
     path('logout', views.logoutUser, name="logout"),
     path('risk', views.m_risk, name="risk"),
+    path('risk2', views.m_risk3, name="risk2"),
     path('avtime', views.m_avtime, name="avtime"),
-    path('wstime', views.m_wstime, name="wstime")
+    path('wstime', views.m_wstime, name="wstime"),
+    path('index',views.index,name='index'),
 
 ]
