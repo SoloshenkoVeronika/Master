@@ -14,8 +14,30 @@
         <input id="grid" type="text" name="wr"><br>
         <label for="grid">Time weight: </label>
         <input id="grid" type="text" name="wt"><br>
-        <input type="submit" value="Get solution" name="Get solution">
 
+
+
+
+        <h1>Main</h1>
+        <p>Well!</p>
+    {% for el in nv %}
+        <label for="er">Pos: </label>
+        <input id="er" type="text" name="er"><br>
+        <p>sdf</p>
+    {% endfor %}
+
+{#        {% if errvs %}#}
+{#            {% for el in errvs %}#}
+{#                <div class="alert alert-warning mt-2">#}
+{#                    <h3>{{ el.errvs }}</h3>#}
+{#                    <p>{{ el.errvs }}</p>#}
+{#                    <p>{{ el.errvs }}</p>#}
+{#                </div>#}
+{#            {% endfor %}#}
+{#        {% else %}#}
+{#            <p>No</p>#}
+{#        {% endif %}#}
+    <input type="submit" value="Get solution" name="Get solution">
     </form>
 {% endblock %}
 

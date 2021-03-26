@@ -4,6 +4,8 @@ import os
 import shutil
 from itertools import combinations
 from msilib import Binary
+
+import itertools
 from pyomo.environ import *
 from pyomo.opt import SolverFactory
 import math
@@ -295,13 +297,16 @@ def model1(grid):
     original = FileFullPath
     filename2 = "Model2t.dat"
     filename3 = "Model3t.dat"
-    filename4 = "Model4tt.dat"
+    filename4 = "Model4t.dat"
+    filename5 = "Modelpotpos.dat"
     FileFullPath2 = os.path.join(full_path, filename2)
     target2 = FileFullPath2
     FileFullPath3 = os.path.join(full_path, filename3)
     target3 = FileFullPath3
     FileFullPath4 = os.path.join(full_path, filename4)
     target4 = FileFullPath4
+    FileFullPath5 = os.path.join(full_path, filename5)
+    target5 = FileFullPath5
     shutil.copyfile(original, target2)
     shutil.copyfile(original, target3)
     shutil.copyfile(original, target4)
@@ -325,19 +330,35 @@ def model1(grid):
         f.write("param radius := 6371;\n")
         f.write("param coef_from := 1.825;\n")
         f.write("param average_speed := 17;\n")
-        f.write("param :     arrive_time xcord_i ycord_i  consequence	threat:= \n")
+        f.write("param vessels_number := " + str(count_errv))
+        f.write(";\n")
+
+        f.write("param :     arrive_time xcord_i ycord_i   consequence	threat:=  \n")
         for p in inst:
             f.write(str(p.get_title())+" "+str(p.get_r_time())+"   "+str(p.get_lat())+"   "+str(p.get_lon())+"   "+str(p.get_people())+"   "+str(p.get_c_accident())+"\n")
         f.write(";\n")
-        f.write("param : 	xcord_s ycord_s:= \n")
 
+
+
+    print("Done1")
+
+    with open(FileFullPath5, 'w') as f:
         i=0
         for p in pos_positions:
             f.write(str("V"+str(i)+" "+(str(pos_positions.__getitem__(i))).replace('[','').replace(']','').replace(',','')+"\n"))
             i+=1
-            f.write(str(" "))
 
-    print("Done1")
+
+    # i=0
+    # with open(FileFullPath5, 'w') as f:
+    #     for j in instance.SITE:
+    #         if(instance.y[j].value==1):
+    #             f.write(str("V"+str(i)+" "+str(instance.ycord_s[j])+" "+str(instance.xcord_s[j])+"\n"))
+    #             i+=1
+
+
+    return count_errv
+
 
 def model2():
     model = AbstractModel()
@@ -624,31 +645,37 @@ def model3():
 
 def model_risk(wr,wt):
 
-    filename = "Model4tt.dat"
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
 
-    FileFullPath4 = os.path.join(full_path, filename)
-
-    filename2 = "Model4ttt.dat"
+    filename2 = "Model4t.dat"
     FileFullPath42 = os.path.join(full_path, filename2)
-    sep = 'set SITE :='
 
-    # with open(FileFullPath4) as file_in:
-    with open(FileFullPath4,'r+') as fr,open(FileFullPath42,'w') as fw:
-        for line in fr:
-            x = line.find('param : 	xcord_s ycord_s:= ')
-            if(x==-1):
-                fw.write(line)
-            else:
-                fw.write(line[0:x])
-                break
-        fw.truncate()
+    filenamepos = "Modelpotpos.dat"
+    FileFullPathPos = os.path.join(full_path, filenamepos)
 
-    with open(FileFullPath42, 'a') as f:
-        f.write("param wr := " + str(wr))
-        f.write(";\n")
-        f.write("param wt := " + str(wt))
-        f.write(";\n")
+    # with open(FileFullPath4,'r+') as fr,open(FileFullPath42,'w') as fw:
+    #     for line in fr:
+    #         x = line.find('param : 	xcord_s ycord_s:= ')
+    #         if(x==-1):
+    #             fw.write(line)
+    #         else:
+    #             fw.write(line[0:x])
+    #             break
+    #     fw.truncate()
+
+    filenameprob = "Probability.txt"
+    FileFullPathProb = os.path.join(full_path, filenameprob)
+
+    with open(FileFullPathPos, 'r') as f1, open(FileFullPathProb, 'r') as f2, open(FileFullPath42, 'a') as f3:
+        f3.write("param : 	xcord_s ycord_s  vulnerability := ")
+        f3.write("\n")
+        for p in zip(f1, f2):
+            print(*map(lambda s: s.strip(), p), sep=' ', file=f3)
+        f3.write(";\n")
+        f3.write("param wr := " + str(wr))
+        f3.write(";\n")
+        f3.write("param wt := " + str(wt))
+        f3.write(";\n")
 
     model = AbstractModel()
 

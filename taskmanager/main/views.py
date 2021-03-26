@@ -1,6 +1,8 @@
 from msilib import Binary
 
 from django.shortcuts import render,redirect
+from django.urls import reverse
+
 from .forms import InstallationForm,ERRVForm
 
 from django.shortcuts import get_object_or_404, render
@@ -72,6 +74,7 @@ def about(request):
         'errvs': errv,
         'title':'about'
     }
+    print("I=",installations)
     return render(request,'main/about.html',context)
 
 
@@ -186,12 +189,35 @@ def m_wstime(request):
         return render(request,'main/wstime.html',context)
 
 def m_risk(request):
-
+    print("______________m_risk_____))))))))))))))))))))))))))))))")
     if  request.method == 'POST':
         grid = request.POST.get("grid", "")
-        model1(grid)
-        installations = Installation.objects.order_by('id')
-        return HttpResponseRedirect('risk2')
+        count_errv = model1(grid)
+        full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
+        filename = "Modelpotpos.dat"
+        FileFullPath = os.path.join(full_path, filename)
+
+        with open(FileFullPath) as f:
+            m= [line.split() for line in f]
+        print(m)
+        print("type=",type(m))
+        list = []
+        errvs = ERRV()
+        for i in range(int(count_errv)):
+            errvs = ERRV(title="O4_" +str(m[i][0]), latitude=m[i][1],longitude=m[i][2],prob=0.001,type_solution=1001)
+            list.append(i)
+        print("m=",errvs)
+
+
+        context = {
+            'nv':list,
+            'el':errvs.get_lat(),
+            'title': "Risk22"
+        }
+        #return render(request,'main/risk2.html',context)
+        return HttpResponseRedirect('risk2',context)
+
+        #return redirect ('risk2',context)
     else:
         context = {
             'title': "Risk1"
@@ -199,11 +225,37 @@ def m_risk(request):
         return render(request,'main/risk.html',context)
 
 def m_risk3(request):
+    print("______________m_risk3))))))))))))))))))))))))))))))")
     if  request.method == 'POST':
         wr = request.POST.get("wr", "")
         wt = request.POST.get("wt", "")
+        er = request.POST.get("er", "")
+        risk1 = 0.1
+        risk21 = 0.1
+        risk22 = 0.3
+        risk31 = 0.1
+        risk32 = 0.2
+        risk33 = 0.3
+        risk4 = 0.5
+
+        risk_list = []
+        risk2 = 1 - (1-float(risk21))*(1-float(risk22))
+        risk3 = 1 - (1-float(risk31))*(1-float(risk32))*(1-float(risk33))
+        risk_sum = 1-(1-float(risk1))*(1-float(risk2))*(1-float(risk3))*(1-float(risk4))
+        risk_list.append(risk_sum)
+        risk_list.append(4)
+        full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
+        filename = "Probability0.txt"
+        FileFullPath = os.path.join(full_path, filename)
+        with open(FileFullPath, 'w') as f:
+            for i in risk_list:
+                f.write(str(i)+"\n")
+
+        print("risk_list=",risk_list)
+
         model_risk(wr,wt)
-        #installations = Installation.objects.order_by('id')
+        #model_risk(wr,wt)
+        print("er=",er)
         context = {
             #'installations':installations,
             'title': "About"
