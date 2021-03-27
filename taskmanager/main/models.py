@@ -52,7 +52,7 @@ class ERRV (models.Model):
     # ERRV longitude in degrees
     longitude = models.FloatField('Latitude')
     # ERRV probability
-    prob = models.FloatField('Probability')
+    prob = models.FloatField('Probability', default='0')
     # ERRV type of solution
     type_solution = models.FloatField('Solution', default='201')
 

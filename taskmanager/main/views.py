@@ -66,12 +66,11 @@ def about(request):
         for x in f:
             errvs = ERRV.objects.filter(id=int(x))
     # errvs = ERRV.objects.filter(id=2)
-    errv = ERRV.objects.filter(type_solution=200)
-    errvs = ERRV.objects.order_by('id')
-    print("===",errvs)
+    errvs= ERRV.objects.filter(type_solution=201)
+    #errvs = ERRV.objects.order_by('id')
     context = {
         'installations': installations,
-        'errvs': errv,
+        'errvs': errvs,
         'title':'about'
     }
     print("I=",installations)
@@ -79,39 +78,45 @@ def about(request):
 
 
 def installation(request):
+    answer = ''
     error = ''
     if  request.method == 'POST':
         form = InstallationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            answer = 'The installation has been added to the databases'
+
         else:
             error = 'Form is not valide'
-
-
+    installations = Installation.objects.order_by('id')
     form = InstallationForm()
     context = {
+        'installations': installations,
         'form': form,
+        'answer':answer,
         'error':error,
         'title':'Installations'
     }
     return render(request,'main/installation.html',context)
 
 def errv(request):
+    answer = ''
     error = ''
     if  request.method == 'POST':
         form = ERRVForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            answer = 'ERRV has been added to the databases'
         else:
             error = 'Form is not valide'
 
-
+    errvs= ERRV.objects.filter(type_solution=201)
     form = ERRVForm()
     context = {
         'form': form,
+        'answer':answer,
         'error':error,
+        'errvs': errvs,
         'title':'ERRV'
     }
     return render(request,'main/errv.html',context)
@@ -156,35 +161,54 @@ def calc(request):
 
 def m_avtime(request):
     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!m_risk")
+    error = ''
     if  request.method == 'POST':
+
         grid = request.POST.get("grid", "")
-        print("!!!!!!!!!!!!!POST m_avtime",grid)
-        model1(grid)
-        model2()
+        if len(grid) == 0:
+            error = 'Number is not valide'
+        else:
+            model1(grid)
+            model2()
+            errvs= ERRV.objects.filter(type_solution=202)
+            installations = Installation.objects.order_by('id')
         context = {
-            'title': "About"
+            'installations': installations,
+            'error':error,
+            'errvs': errvs,
+            'title': "Minimizing average time"
         }
-        return render(request,'main/about.html',context)
+        return render(request,'main/avtime.html',context)
     else:
         context = {
-            'title': "Average time"
+            'title': "Minimizing average time"
         }
         return render(request,'main/avtime.html',context)
 
 def m_wstime(request):
     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!m_risk")
+    error = ''
     if  request.method == 'POST':
+
         grid = request.POST.get("grid", "")
-        print("!!!!!!!!!!!!!POST m_wstime",grid)
-        model1(grid)
-        model3()
+        if len(grid) == 0:
+            error = 'Number is not valide'
+        else:
+            model1(grid)
+            model3()
+            errvs= ERRV.objects.filter(type_solution=203)
+            installations = Installation.objects.order_by('id')
         context = {
-            'title': "About"
+            'installations': installations,
+            'errvs':errvs,
+            'error':error,
+            'title': "Worst-time minimization"
         }
-        return render(request,'main/about.html',context)
+        return render(request,'main/wstime.html',context)
+
     else:
         context = {
-            'title': "Worst time"
+            'title': "Worst-time minimization"
         }
         return render(request,'main/wstime.html',context)
 
@@ -260,7 +284,7 @@ def m_risk3(request):
             #'installations':installations,
             'title': "About"
         }
-        return render(request,'main/about.html',context)
+        return render(request,'main/risk2.html',context)
     else:
         context = {
             'title': "Risk2"

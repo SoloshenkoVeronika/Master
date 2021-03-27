@@ -6,16 +6,32 @@
 
 
 {% block content %}
-    <h1>Calc</h1>
-    <p>Nice!</p>
     <form action="" method="post">
         {% csrf_token %}
-        <label for="grid">Risk weight: </label>
-        <input id="grid" type="text" name="wr"><br>
-        <label for="grid">Time weight: </label>
-        <input id="grid" type="text" name="wt"><br>
 
+        <div class="ui main text container">
+            <h1 class="ui header">!!!!!!!!!!!!!!!!!!!!!</h1>
+            <form class="ui large form" method="post">
+                <div class="ui stacked segment">
+                    {% csrf_token %}
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Risk weight</label>
+                            <input class="form-control" id="grid" type="text" name="wr"><br>
+                        </div>
+                        <div class="field">
+                            <label>Time weight</label>
+                            <input class="form-control" id="grid" type="text" name="wt"><br>
+                        </div>
+                    </div>
+                    <input type="submit" value="Get solution" class="positive ui button" name="average_time">
 
+                    <br>
+                    <span class="ui big red text">{{ error }}</span>
+                    <span class="ui big green text">{{ answer }}</span>
+                </div>
+            </form>
+        </div>
 
 
         <h1>Main</h1>
@@ -37,7 +53,7 @@
 {#        {% else %}#}
 {#            <p>No</p>#}
 {#        {% endif %}#}
-    <input type="submit" value="Get solution" name="Get solution">
-    </form>
+
+
 {% endblock %}
 

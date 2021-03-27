@@ -6,15 +6,240 @@
 
 
 {% block content %}
-    <h1>Calc</h1>
-    <p>Nice!</p>
-    <form action="" method="post">
+    <div class="ui main text container">
+    <h1 class="ui header">!!!!!!!!!!!!!!!!!!!!!</h1>
+    <form class="ui large form" method="post">
+        <div class="ui stacked segment">
         {% csrf_token %}
+            <div class="ui form">
+                <div class="field">
+                    <label>Grid size</label><br>
+                    <input class="form-control" id="grid" type="text" name="grid"><br><br>
+                    <input type="submit" value="Get solution" class="positive ui button" name="average_time">
+                </div>
+            </div>
 
-        <label for="grid">Grid size: </label>
-        <input id="grid" type="text" name="grid"><br>
-        <input type="submit" value="Average time" name="average_time">
+            <br>
+            <span class="ui big red text">{{ error }}</span>
+            <span class="ui big green text">{{ answer }}</span>
+        </div>
     </form>
+    </div>
+    <div class="ui fluid raised card" style="margin-top:30px">
+        <div class="content">
+            <!--<div class="header">-->
+            <!--Worlds Capitals-->
+            <!--</div>-->
+            <div class="description">
+                <div class="ui bulleted list">
+                    <div class="item">The most busiest airport in each country</div>
+                    <div class="item">Data from <a
+                            href="https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Europe"> Wikipedia</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="image">
+            <!-- Map with unique DOM id -->
+            <div id="map-1" style="width:100%;min-height:625px;"></div>
+        </div>
+        <div class="extra content">
+            <small>
+                ArcGIS</a> &copy; <a href="https://www.arcgis.com/home/group.html?id=702026e41f6641fb85da88efe79dc166"
+                                     target="_blank">World_Topo_Map</a> </a>
+            </small>
+        </div>
+        <div class="extra content">
+            <p>
+                This is a list of the 100 busiest airports in Europe, ranked by total passengers per year, including
+                both terminal and transit passengers. Data is for 2019 and is sourced individually for each airport and
+                from a variety of sources, normally the national aviation authority statistics, or those of the airport
+                operator.
+            <p>
+                Source: Wikipedia
+            </p>
+        </div>
+    </div>
 
+
+    <script>
+        const RegionEnum = {
+            ['101.0']: '#0652DD',
+            ['202.0']: '#fffa16'
+
+        };
+        // Load Google Charts. See docs. https://developers.google.com/chart/interactive/docs/basic_load_libs
+        google.charts.load('current', {
+            language: 'en',
+            // packages: ['corechart','line','calendar','table','geochart']
+        });
+
+        // Google Charts is ready
+        google.charts.setOnLoadCallback(function () {
+            data1.request(); // Request Google Sheets data
+        });
+
+        //
+        // Data object 1 (map)
+        //
+        var data1 = {
+
+            // Url to Google Sheets. See docs: https://developers.google.com/chart/interactive/docs/spreadsheets
+            url: "https://docs.google.com/spreadsheets/d/18xpUtHADc8UuzPrCC8eSExeYFqvz1BfYm8W0H5jaCNc/gviz/tq?gid=1167329727&headers=1",
+
+            // Request google sheet data
+            request: function () {
+                var query = new google.visualization.Query(data1.url);
+                query.send(data1.response);
+            },
+
+            // Handle google sheet response
+            response: function () {
+                map1.init();
+            },
+        }
+
+
+        var map1 = {
+
+            // Maptalks map options. See docs. https://maptalks.org/maptalks.js/api/0.x/Map.html
+            map: new maptalks.Map("map-1", {
+                center: [3.62674464, 63.66796875], // longitude, latitude - (x,y) on screen
+                zoom: 4.5,
+                minZoom: 2.9,
+                maxZoom: 18,
+                maxPitch: 40, // 60 is max for mapbox tiles
+                pitch: 0,
+                bearing: 0,
+
+                attribution: false,
+                seamlessZoom: true,
+                hitDetect: false,
+                fixCenterOnResize: true,
+
+                scrollWheelZoom: true, // PC
+                doubleClickZoom: true, // PC and mobile
+
+                dragPan: true,
+                draggable: true,
+
+                dragPitch: false, // PC
+                dragRotate: false, // PC
+                dragRotatePitch: false, // PC
+
+                touchZoom: true, // Mobile
+                touchPitch: false, // Mobile
+                touchRotate: false, // Mobile
+                touchZoomRotate: false, // Mobile
+
+                // Base map. See different tile providers here: http://leaflet-extras.github.io/leaflet-providers/preview/
+                baseLayer: new maptalks.TileLayer('CARTO_base', {
+                    urlTemplate: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+                    subdomains: ['a', 'b', 'c', 'd'],
+                    maxAvailableZoom: 30,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                }),
+
+            }),
+
+            // Set echarts options. See docs.: https://echarts.apache.org/en/option.html
+            options: {
+                baseOption: {
+                    tooltip: {
+                        trigger: 'item',
+                        //triggerOn: 'click',
+                        // enterable: true,
+                        backgroundColor: 'none',
+                        borderWidth: 0,
+                        padding: 0,
+                        textStyle: {
+                            fontWeight: 'bold',
+                            fontSize: 10,
+                        },
+                        // Tooltip design
+                        formatter: function (params, ticket, callback) {
+                            var lng = params.data.value[0];
+                            var lat = params.data.value[1];
+                            var city = params.data.value[2];
+                            var tooltip = '<div class="ui raised center aligned inverted red segment">' + city;
+                            return tooltip;
+                        }
+                    },
+                    series: [
+                        {
+                            type: 'scatter',
+                            coordinateSystem: 'geo',
+                            zlevel: 1,
+                            symbol: 'circle',
+                            animation: false,
+                            symbolSize: function (val) {
+                                return 15; // Fixed size for all map points
+                            },
+                            itemStyle: {
+                                {#                                color: '#1565c0', // blue#}
+                                color: function (params) {
+                                    {#                                    alert(params.data.value[2]+params.data.value[3]);#}
+                                    return RegionEnum[params.data.value[3]];
+                                },
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    color: '#d50000', // red
+                                    borderWidth: 5,
+                                    borderColor: '#d50000' // red
+                                },
+                            },
+                            data: null, // add google sheet data (see init function)
+
+                        },
+                    ]
+                }
+            },
+
+            // Initialize chart
+            init: function () {
+
+
+
+                // Init the echarts data array
+                var data = [];
+
+                {% for installation in installations %}
+
+                    var row = {
+                        value: ["{{ installation.longitude }}", "{{ installation.latitude }}", "{{ installation.title }}", "{{ installation.c_flaf }}"],
+                        name: "{{ installation.title }}"// Captial name
+                    }
+                    // Push row into array
+                    {#                    alert(row.value+" "+row.name);//Raises an alert#}
+                    data.push(row);
+
+                {% endfor %}
+                {% for errv in errvs %}
+
+                    var row = {
+                        value: ["{{ errv.longitude }}", "{{ errv.latitude }}", "{{ errv.title }}", "{{ errv.type_solution }}"],
+                        name: "{{ errv.title }}"// Captial name
+                    }
+                    // Push row into array
+                    {#                    alert(row.value+" "+row.name);//Raises an alert#}
+                    data.push(row);
+
+                {% endfor %}
+
+
+                // Assign the data to chart
+                map1.options.baseOption.series[0].data = data;
+
+                // Add chart to maptalks map
+                map1.echartsLayer = new maptalks.E3Layer('echartsLayer', map1.options.baseOption, {
+                    hideOnMoving: false,
+                    hideOnZooming: true, // reset all points (needed on mobile)
+                    hideOnRotating: true, // reset all points (needed on mobile)
+                }).addTo(map1.map);
+            }
+        }
+
+    </script>
 {% endblock %}
 

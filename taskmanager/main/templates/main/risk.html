@@ -6,16 +6,25 @@
 
 
 {% block content %}
-    <h1>Calc</h1>
-    <p>Nice!</p>
-    <form action="" method="post">
-        {% csrf_token %}
-        <label for="grid">Grid size: </label>
-        <input id="grid" type="text" name="grid"><br>
+    <div class="ui main text container">
+        <h1 class="ui header">!!!!!!!!!!!!!!!!!!!!!</h1>
+        <form class="ui large form" method="post">
+            <div class="ui stacked segment">
+                {% csrf_token %}
+                <div class="ui form">
+                    <div class="field">
+                        <label>Grid size</label><br>
+                        <input id="grid" type="text" name="grid"><br><br>
+                        <input type="submit" value="Next step" class="positive ui button" name="Send">
+                    </div>
+                </div>
 
-        <input type="submit" value="Send" name="Send">
-
-    </form>
+                <br>
+                <span class="ui big red text">{{ error }}</span>
+                <span class="ui big green text">{{ answer }}</span>
+            </div>
+        </form>
+    </div>
 
 {% endblock %}
 

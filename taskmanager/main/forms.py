@@ -13,6 +13,7 @@ class InstallationForm(ModelForm):
     class Meta:
         model = Installation
         fields = ["title","latitude","longitude","r_time","number_of_people","prob_accident"]
+        labels = {'text':'latitude'}
         widgets = {
             "title":TextInput(attrs={
                 'class':'form-control',
@@ -20,31 +21,32 @@ class InstallationForm(ModelForm):
             }),
             "latitude":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter latitude"
+                'placeholder':"Enter Latitude"
             }),
             "longitude":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter longitude"
+                'placeholder':"Enter Longitude"
             }),
             "r_time":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter r_time"
+                'placeholder':"Enter Time Requirement"
             }),
             "number_of_people":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter number of people"
+                'placeholder':"Enter enter the number of people on the installation"
             }),
             "prob_accident":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter probability of accident"
+                'placeholder':"Enter the probability of accident"
             }),
         }
+
 
 
 class ERRVForm(ModelForm):
     class Meta:
         model = ERRV
-        fields = ["title","latitude","longitude","prob"]
+        fields = ["title","latitude","longitude"]
         widgets = {
             "title":TextInput(attrs={
                 'class':'form-control',
@@ -58,9 +60,6 @@ class ERRVForm(ModelForm):
                 'class':'form-control',
                 'placeholder':"Enter longitude"
             }),
-            "prob":TextInput(attrs={
-                'class':'form-control',
-                'placeholder':"Enter prob"
-            }),
+
 
         }
