@@ -15,5 +15,6 @@ urlpatterns = [
     path('avtime', views.m_avtime, name="avtime"),
     path('wstime', views.m_wstime, name="wstime"),
     path('index',views.index,name='index'),
+    path('map',views.map,name='map'),
 
 ]

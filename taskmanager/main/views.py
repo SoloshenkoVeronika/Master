@@ -31,9 +31,12 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-
+from folium.plugins import MarkerCluster
+import pandas as pd
 from django.contrib.auth.decorators import login_required
-
+#import geopandas as gpd
+from shapely.geometry import Polygon
+import folium
 from pyomo.environ import *
 from pyomo.opt import SolverFactory
 from .forms import  CreateUserForm
@@ -332,3 +335,46 @@ def loginPage(request):
 def logoutUser(request):
     logout(request)
     return redirect('login')
+
+def map(request):
+    context = {
+        'title':'Map'
+    }
+    #creation of map comes here + business logic
+    m = folium.Map([61.854457, 2.377184], zoom_start=5)
+
+
+    #Load Data
+    data = pd.read_csv('main\\recources\\Data_Map.txt')
+    lat = data['LAT']
+    lon = data['LON']
+    elevation = data['ELEV']
+
+    #Function to change colors
+    def color_change(elev):
+        if(elev == 1 ):
+            return('green')
+        elif(elev == 2):
+            return('yellow')
+        elif(elev == 3):
+            return('red')
+        elif(elev == 4):
+            return('orange')
+        elif(elev == 5):
+            return('white')
+        elif(elev == 6):
+            return('blue')
+
+    #Plot Markers
+    for lat, lon, elevation in zip(lat, lon, elevation):
+        folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(elevation)+" m", fill_color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+
+    test = folium.Html('<b>Hello world</b>', script=True)
+    # popup = folium.Popup(test, max_width=2650)
+    # folium.RegularPolygonMarker(location=[51.5, -0.25], popup=popup).add_to(m)
+    m=m._repr_html_() #updated
+    context = {'my_map': m}
+
+
+    #return render(request, 'polls/show_folium_map.html', context)
+    return render(request,'main/map.html',context)

@@ -1,0 +1,28 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="ui main text container">
+        <h1 class="ui header">!!!!!!!!!!!!!!!!!!!!!</h1>
+        <form class="ui large form" method="post">
+            <div class="ui stacked segment">
+
+                <div class="ui form">
+                    <div class="field">
+                        <label>Grid size</label><br>
+
+                    </div>
+                </div>
+
+                <br>
+
+            </div>
+        </form>
+    </div>
+    {{ my_map|safe }}
+{% endblock %}
+
