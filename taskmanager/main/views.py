@@ -71,6 +71,11 @@ def about(request):
     # errvs = ERRV.objects.filter(id=2)
     errvs= ERRV.objects.filter(type_solution=201)
     #errvs = ERRV.objects.order_by('id')
+    # print("Delete=",request.GET.get('DeleteButton'))
+    if (request.GET.get('DeleteButtonI')):
+        Installation.objects.filter(id = request.GET.get('DeleteButtonI')).delete()
+    if (request.GET.get('DeleteButtonE')):
+        ERRV.objects.filter(id = request.GET.get('DeleteButtonE')).delete()
     context = {
         'installations': installations,
         'errvs': errvs,
@@ -173,14 +178,58 @@ def m_avtime(request):
         else:
             model1(grid)
             model2()
-            errvs= ERRV.objects.filter(type_solution=202)
-            installations = Installation.objects.order_by('id')
+            # errvs= ERRV.objects.filter(type_solution=202)
+            # installations = Installation.objects.order_by('id')
+
+            #creation of map comes here + business logic
+            m = folium.Map([62.354457, 2.377184], zoom_start=6)
+
+            #Load Data
+            data = pd.read_csv('main\\recources\\Data_Map.txt')
+            lat = data['LAT']
+            lon = data['LON']
+            elevation = data['ELEV']
+
+            #Function to change colors
+            def color_change(elev):
+                if(elev == 1 ):
+                    return('green')
+                elif(elev == 2):
+                    return('yellow')
+                elif(elev == 3):
+                    return('green')
+
+            #Function to change colors
+            def radius_change(elev):
+                if(elev == 3 ):
+                    return 62050
+                elif(elev == 5):
+                    return 124100
+                elif(elev == 6):
+                    return 155125
+
+            data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
+            lat2 = data2['LAT']
+            lon2 = data2['LON']
+            elevation2 = data2['ELEV']
+
+            for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
+                folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='green',  fill_opacity = 0.2).add_to(m)
+
+            #Plot Markers
+            for lat, lon, elevation in zip(lat, lon, elevation):
+                folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(lat)+" m", fill_color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+
+            m=m._repr_html_() #updated
+            # context = {'my_map': m}
+
         context = {
-            'installations': installations,
-            'error':error,
-            'errvs': errvs,
-            'title': "Minimizing average time"
-        }
+                # 'installations': installations,
+                'error':error,
+                'my_map': m,
+                # 'errvs': errvs,
+                'title': "Minimizing average time"
+            }
         return render(request,'main/avtime.html',context)
     else:
         context = {
@@ -201,9 +250,51 @@ def m_wstime(request):
             model3()
             errvs= ERRV.objects.filter(type_solution=203)
             installations = Installation.objects.order_by('id')
+            m = folium.Map([62.354457, 2.377184], zoom_start=6)
+
+            #Load Data
+            data = pd.read_csv('main\\recources\\Data_Map.txt')
+            lat = data['LAT']
+            lon = data['LON']
+            elevation = data['ELEV']
+
+            #Function to change colors
+            def color_change(elev):
+                if(elev == 1 ):
+                    return('green')
+                elif(elev == 2):
+                    return('yellow')
+                elif(elev == 3):
+                    return('green')
+
+            #Function to change colors
+            def radius_change(elev):
+                if(elev == 3 ):
+                    return 62050
+                elif(elev == 5):
+                    return 124100
+                elif(elev == 6):
+                    return 155125
+
+            data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
+            lat2 = data2['LAT']
+            lon2 = data2['LON']
+            elevation2 = data2['ELEV']
+
+            for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
+                folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='green',  fill_opacity = 0.2).add_to(m)
+
+            #Plot Markers
+            for lat, lon, elevation in zip(lat, lon, elevation):
+                folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(lat)+" m", fill_color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+
+            m=m._repr_html_() #updated
+
+
         context = {
-            'installations': installations,
-            'errvs':errvs,
+            # 'installations': installations,
+            # 'errvs':errvs,
+            'my_map': m,
             'error':error,
             'title': "Worst-time minimization"
         }
@@ -341,7 +432,7 @@ def map(request):
         'title':'Map'
     }
     #creation of map comes here + business logic
-    m = folium.Map([61.854457, 2.377184], zoom_start=5)
+    m = folium.Map([62.354457, 2.377184], zoom_start=6)
 
 
     #Load Data
@@ -357,21 +448,34 @@ def map(request):
         elif(elev == 2):
             return('yellow')
         elif(elev == 3):
-            return('red')
-        elif(elev == 4):
-            return('orange')
+            return('green')
+
+    #Function to change colors
+    def radius_change(elev):
+        if(elev == 3 ):
+            return 62050
         elif(elev == 5):
-            return('white')
+            return 124100
         elif(elev == 6):
-            return('blue')
+            return 155125
+
+
+    data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
+    lat2 = data2['LAT']
+    lon2 = data2['LON']
+    elevation2 = data2['ELEV']
+
+    for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
+        folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='green',  fill_opacity = 0.2).add_to(m)
 
     #Plot Markers
     for lat, lon, elevation in zip(lat, lon, elevation):
-        folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(elevation)+" m", fill_color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+        folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(lat)+" m", fill_color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
 
-    test = folium.Html('<b>Hello world</b>', script=True)
-    # popup = folium.Popup(test, max_width=2650)
-    # folium.RegularPolygonMarker(location=[51.5, -0.25], popup=popup).add_to(m)
+    #Plot Markers
+    # for lat, lon, elevation in zip(lat, lon, elevation):
+    #     folium.Circle(location=[lat, lon], radius = radius_change(elevation), popup=str(elevation)+" m", fill_color=color_change(elevation),  fill_opacity = 0.2).add_to(m)
+
     m=m._repr_html_() #updated
     context = {'my_map': m}
 

@@ -167,8 +167,10 @@ def model1(grid):
     inst = Installation.objects.all()
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
     filename = "Model1t.dat"
+    filenamemap = "Data_Map.txt"
     FileFullPath = os.path.join(full_path, filename)
-    with open(FileFullPath, 'w') as f:
+    FileFullPathMap = os.path.join(full_path, filenamemap)
+    with open(FileFullPath, 'w') as f,open(FileFullPathMap, 'w') as fm:
         f.write("set INSTALLATION := ")
         for p in inst:
             f.write(str(p.get_title())+" ")
@@ -183,14 +185,17 @@ def model1(grid):
         f.write("param coef_from := 1.825;\n")
         f.write("param average_speed := 17;\n")
         f.write("param :     arrive_time xcord_i ycord_i:= \n")
+        fm.write("ELEV,LAT,LON\n")
         for p in inst:
-            f.write(str(p.get_title())+" "+str(p.get_r_time())+"   "+str(p.get_lat())+"   "+str(p.get_lon())+"\n")
+            f.write(str(p.get_title())+" "+str(p.get_r_time()-1)+"   "+str(p.get_lat())+"   "+str(p.get_lon())+"\n")
+            fm.write(str(1)+",   "+str(p.get_lat())+",   "+str(p.get_lon())+"\n")
         f.write(";\n")
         f.write("param : 	xcord_s ycord_s:= \n")
 
         i=0
         for p in pos_positions:
             f.write(str("V"+str(i)+" "+(str(pos_positions.__getitem__(i))).replace('[','').replace(']','').replace(',','')+"\n"))
+            fm.write(str(2)+",   "+str(pos_positions.__getitem__(i)).replace('[','').replace(']','')+"\n")
             i+=1
             f.write(str(" "))
 
@@ -458,8 +463,11 @@ def model2():
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
     filename_results = "Model2t.sol"
     FileFullPathResults = os.path.join(full_path, filename_results)
-
-    with open(FileFullPathResults, 'w') as f:
+    filename_results_map = "Data_Map.txt"
+    FileFullPathMap = os.path.join(full_path, filename_results_map)
+    filename_results_map_errv = "Data_Map_ERRV.txt"
+    FileFullPathMap_errv = os.path.join(full_path, filename_results_map_errv)
+    with open(FileFullPathResults, 'w') as f,open(FileFullPathMap, 'a') as fm,open(FileFullPathMap_errv, 'w') as fmerrv:
         f.write("Total cost="+str(value(instance.obj))+"\n")
         f.write("Coverage parameter="+"\n")
         for i in instance.INSTALLATION:
@@ -477,9 +485,18 @@ def model2():
         for j in instance.SITE:
             f.write(str(instance.y[j].value)+ " ")
         f.write("\n")
+        fmerrv.write("ELEV,LAT,LON\n")
         for j in instance.SITE:
             if(instance.y[j].value==1):
                 f.write("O_" +str(j)+ " "+str(instance.xcord_s[j])+ " "+str(instance.ycord_s[j])+" 1")
+                fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                fm.write("\n")
+                fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                fmerrv.write("\n")
+                fmerrv.write(str(5)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                fmerrv.write("\n")
+                fmerrv.write(str(6)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                fmerrv.write("\n")
             f.write("\n")
         f.write("\n")
     ERRV.objects.filter(type_solution=202).delete()
@@ -620,13 +637,26 @@ def model3():
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
     filename_resultserrv = "Model3terrv.sol"
     FileFullPathResults = os.path.join(full_path, filename_resultserrv)
+    filename_results_map = "Data_Map.txt"
+    FileFullPathMap = os.path.join(full_path, filename_results_map)
+    filename_results_map_errv = "Data_Map_ERRV.txt"
+    FileFullPathMap_errv = os.path.join(full_path, filename_results_map_errv)
 
     number_errv = 1
-    with open(FileFullPathResults, 'w') as f:
+    with open(FileFullPathResults, 'w') as f,open(FileFullPathMap, 'a') as fm,open(FileFullPathMap_errv, 'w') as fmerrv:
+        fmerrv.write("ELEV,LAT,LON\n")
         for j in instance.SITE:
             #print (instance.y[j].value)
             if (instance.y[j].value == 1.0):
                 f.write(str(number_errv))
+                fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                fm.write("\n")
+                fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                fmerrv.write("\n")
+                fmerrv.write(str(5)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                fmerrv.write("\n")
+                fmerrv.write(str(6)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                fmerrv.write("\n")
                 f.write("\n")
             number_errv+=1
     ERRV.objects.filter(type_solution=203).delete()

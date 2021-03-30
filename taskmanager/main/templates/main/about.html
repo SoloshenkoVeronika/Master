@@ -6,7 +6,7 @@
 
 
 {% block content %}
-    <div class="ui main text container">
+{#    <div class="ui main text container">#}
     <div class="ui stacked segment">
 
     <h1>Installations</h1>
@@ -28,6 +28,8 @@
                     <th>Time requirement (hr)</th>
                     <th>Number of people</th>
                     <th>The probability of accident</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -39,6 +41,12 @@
                         <td>{{ installation.r_time }}</td>
                         <td>{{ installation.number_of_people }}</td>
                         <td>{{ installation.prob_accident }}</td>
+                        <td><button  class="ui grey button" value="Edit">Edit</button></td>
+                        <td>
+                        <form action="" method="get">
+                            <button class = "ui button" name="DeleteButtonI" value="{{ installation.id }}">Delete</button>
+                        </form>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -52,6 +60,8 @@
                     <th>ERRV</th>
                     <th>Position N</th>
                     <th>Position E</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -60,6 +70,11 @@
                         <td>{{ errv.title }}</td>
                         <td>{{ errv.latitude }}</td>
                         <td>{{ errv.longitude }}</td>
+                        <td>
+                        <form action="" method="get">
+                            <button class = "ui button" name="DeleteButtonE" value="{{ errv.id }}">Delete</button>
+                        </form>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -67,7 +82,7 @@
         </div>
     {% endif %}
     </div>
-    </div>
+{#    </div>#}
     <div class="ui fluid raised card" style="margin-top:30px">
         <div class="content">
             <!--<div class="header">-->
