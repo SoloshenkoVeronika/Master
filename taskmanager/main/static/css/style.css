@@ -1,0 +1,10 @@
+body{
+    background-image: url('../img/fon3.jpg');
+    /*background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 0%,rgba(255, 255, 255, 0.3) 100%), url(../img/f4.jpg);*/
+    /*background-repeat: no-repeat;*/
+    /*background-size: 100% 100%;*/
+}
+.jumbotron{
+    background-color: #FFFFFF;
+    /*background-color:none !important;*/
+}

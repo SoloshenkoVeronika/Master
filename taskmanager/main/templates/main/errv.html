@@ -26,8 +26,13 @@
                             {{ form.longitude }}
                         </div>
                     </div>
+                    <div class="two fields">
+                        <div class="field">
+                            {{ form.type_solution }}
+                        </div>
+                    </div>
                     <div class="field">
-                        <button type="submit" class="btn btn-success">Add</button>
+                        <button type="submit" class="ui blue  button" name="Current" value="Current">OK</button>
                     </div>
                 </div>
                 <br>
@@ -39,17 +44,15 @@
 
     <div class="ui fluid raised card" style="margin-top:30px">
         <div class="content">
-            <!--<div class="header">-->
-            <!--Worlds Capitals-->
-            <!--</div>-->
-            <div class="description">
-                <div class="ui bulleted list">
-                    <div class="item">The most busiest airport in each country</div>
-                    <div class="item">Data from <a
-                            href="https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Europe"> Wikipedia</a>
-                    </div>
-                </div>
+            <div class="header text-center">
+                ERRV Location Map
             </div>
+            {#            <div class="description">#}
+            {#                <div class="ui bulleted list">#}
+            {#                    <div class="item"></div>#}
+            {##}
+            {#                </div>#}
+            {#            </div>#}
         </div>
         <div class="image">
             <!-- Map with unique DOM id -->
@@ -57,27 +60,25 @@
         </div>
         <div class="extra content">
             <small>
-                ArcGIS</a> &copy; <a href="https://www.arcgis.com/home/group.html?id=702026e41f6641fb85da88efe79dc166"
-                                     target="_blank">World_Topo_Map</a> </a>
             </small>
         </div>
         <div class="extra content">
             <p>
-                This is a list of the 100 busiest airports in Europe, ranked by total passengers per year, including
-                both terminal and transit passengers. Data is for 2019 and is sourced individually for each airport and
-                from a variety of sources, normally the national aviation authority statistics, or those of the airport
-                operator.
+
             <p>
-                Source: Wikipedia
+
             </p>
         </div>
     </div>
 
 
     <script>
+        window.onload = function () {
+            $('.ui.dropdown').dropdown();
+        }
         const RegionEnum = {
             ['101.0']: '#0652DD',
-            ['201.0']: '#fffa16'
+            ['201.0']: '#ffda25'
 
         };
         // Load Google Charts. See docs. https://developers.google.com/chart/interactive/docs/basic_load_libs

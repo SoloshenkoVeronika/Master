@@ -1,5 +1,5 @@
 from .models import Installation,ERRV
-from django.forms import ModelForm, TextInput,Textarea
+from django.forms import ModelForm, TextInput, Textarea, MultipleChoiceField, Select, CharField, ModelChoiceField
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -17,49 +17,54 @@ class InstallationForm(ModelForm):
         widgets = {
             "title":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter title"
+                # 'placeholder':"Enter title"
             }),
             "latitude":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter Latitude"
+                # 'placeholder':"Enter Latitude"
             }),
             "longitude":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter Longitude"
+                # 'placeholder':"Enter Longitude"
             }),
             "r_time":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter Time Requirement"
+                # 'placeholder':"Enter Time Requirement"
             }),
             "number_of_people":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter enter the number of people on the installation"
+                # 'placeholder':"Enter enter the number of people on the installation"
             }),
             "prob_accident":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter the probability of accident"
+                # 'placeholder':"Enter the probability of accident"
             }),
         }
 
+POSITION_CHOICES= [
+    ('201', 'Current position'),
+    ('210', 'Potential position'),
+]
 
 
 class ERRVForm(ModelForm):
-    class Meta:
+   class Meta:
         model = ERRV
-        fields = ["title","latitude","longitude"]
+        fields = ["title","latitude","longitude","type_solution"]
         widgets = {
             "title":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter title"
+                # 'placeholder':"Enter title"
             }),
             "latitude":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter latitude"
+                # 'placeholder':"Enter latitude"
             }),
             "longitude":TextInput(attrs={
                 'class':'form-control',
-                'placeholder':"Enter longitude"
+                # 'placeholder':"Enter longitude"
             }),
+            "type_solution": Select(choices  = POSITION_CHOICES)
 
 
         }

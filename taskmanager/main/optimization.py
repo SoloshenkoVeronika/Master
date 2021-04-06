@@ -22,22 +22,20 @@ from shapely.geometry import Point, Polygon
 
 def get_pot_position(grid):
 
-    comb2 =  Installation.objects.count()
     all_installations = []
-    for i in range(comb2):
-        i=i+1
+    installation_set = Installation.objects.all()
+
+    for installation in installation_set.iterator():
         field_lat1 = 'latitude'
         field_lon1 = 'longitude'
         single_installation = []
-        obj=Installation.objects.get(id=i)
+        obj=Installation.objects.get(id=installation.id)
         #print("obj=",obj)
         field_value_lat1 = getattr(obj,  field_lat1)
         field_value_lon1 = getattr(obj,  field_lon1)
         single_installation.append(field_value_lat1)
         single_installation.append(field_value_lon1)
         all_installations.append(single_installation)
-
-
 
     points_all_installations = np.asarray(all_installations, dtype=np.float32)
     #print(all_installations)
@@ -161,10 +159,12 @@ def t_validate2(model, i,j):
 
 
 def model1(grid):
-    #print("model1=", grid)
+    print("model1=", grid)
     pos_positions = get_pot_position(grid)
     lent_pos_positions = len(pos_positions) - pos_positions.count(None)
     inst = Installation.objects.all()
+    print("!!!!!!!!!!!!!!!! FINISH model1 !!!!!!!!!!!!!!!!!!!!!!")
+
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
     filename = "Model1t.dat"
     filenamemap = "Data_Map.txt"
@@ -183,11 +183,16 @@ def model1(grid):
         f.write(";\n")
         f.write("param radius := 6371;\n")
         f.write("param coef_from := 1.825;\n")
-        f.write("param average_speed := 17;\n")
+        f.write("param average_speed := 14;\n")
         f.write("param :     arrive_time xcord_i ycord_i:= \n")
         fm.write("ELEV,LAT,LON\n")
         for p in inst:
-            f.write(str(p.get_title())+" "+str(p.get_r_time()-1)+"   "+str(p.get_lat())+"   "+str(p.get_lon())+"\n")
+            time = p.get_r_time()
+            # if (time==3):
+            #     time = 5
+            # else:
+            #     time = p.get_r_time()
+            f.write(str(p.get_title())+" "+str(time-1)+"   "+str(p.get_lat())+"   "+str(p.get_lon())+"\n")
             fm.write(str(1)+",   "+str(p.get_lat())+",   "+str(p.get_lon())+"\n")
         f.write(";\n")
         f.write("param : 	xcord_s ycord_s:= \n")
@@ -334,7 +339,7 @@ def model1(grid):
         f.write(";\n")
         f.write("param radius := 6371;\n")
         f.write("param coef_from := 1.825;\n")
-        f.write("param average_speed := 17;\n")
+        f.write("param average_speed := 14;\n")
         f.write("param vessels_number := " + str(count_errv))
         f.write(";\n")
 
@@ -481,7 +486,7 @@ def model2():
                 f.write(str(instance.x[i,j].value)+ " ")
             f.write("\n")
         f.write("\n")
-        f.write("Y="+"\n")
+        f.write("Y=")
         for j in instance.SITE:
             f.write(str(instance.y[j].value)+ " ")
         f.write("\n")
@@ -548,14 +553,14 @@ def model3():
     def Balance3(model,i,j):
         return model.x[i,j] <= model.y[j]
 
-    def Balance4(model):
-        return sum(model.distance_time[i,j]*model.x[i,j] for i in model.INSTALLATION for j in model.SITE) <= model.t
+    def Balance4(model,i,j):
+        return model.distance_time[i,j]*model.x[i,j] <= model.t
 
 
     model.con1 = Constraint(model.INSTALLATION, rule=Balance)
     model.con2 = Constraint(rule=Balance2)
     model.con3 = Constraint(model.INSTALLATION,model.SITE,rule=Balance3)
-    model.con4 = Constraint(rule=Balance4)
+    model.con4 = Constraint(model.INSTALLATION,model.SITE,rule=Balance4)
 
 
 
@@ -629,10 +634,13 @@ def model3():
                 f.write(str(instance.x[i,j].value)+ " ")
             f.write("\n")
         f.write("\n")
-        f.write("Y="+"\n")
+        f.write("Y=")
         for j in instance.SITE:
             f.write(str(instance.y[j].value)+ " ")
         f.write("\n")
+        for j in instance.SITE:
+            if(instance.y[j].value==1):
+                f.write("O_" +str(j)+ " "+str(instance.xcord_s[j])+ " "+str(instance.ycord_s[j])+" 1 \n")
 
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
     filename_resultserrv = "Model3terrv.sol"

@@ -61,15 +61,15 @@ def index(request):
 
 def about(request):
     installations = Installation.objects.order_by('id')
-    # errvs = ERRV.objects.order_by('id')
+
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
     filename_results = "Model3terrv.sol"
     FileFullPathResults = os.path.join(full_path, filename_results)
     with open(FileFullPathResults, 'r') as f:
         for x in f:
             errvs = ERRV.objects.filter(id=int(x))
-    # errvs = ERRV.objects.filter(id=2)
-    errvs= ERRV.objects.filter(type_solution=201)
+
+    errvs= ERRV.objects.filter(type_solution__in=[201,210])
     #errvs = ERRV.objects.order_by('id')
     # print("Delete=",request.GET.get('DeleteButton'))
     if (request.GET.get('DeleteButtonI')):
@@ -79,7 +79,7 @@ def about(request):
     context = {
         'installations': installations,
         'errvs': errvs,
-        'title':'about'
+        'title':'Map'
     }
     print("I=",installations)
     return render(request,'main/about.html',context)
@@ -107,6 +107,34 @@ def installation(request):
     }
     return render(request,'main/installation.html',context)
 
+def updateInstallation(request, pk):
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!111pk===",pk)
+    installation = Installation.objects.get(id=pk)
+    print("!!!!!!!!!order===",installation)
+    form = InstallationForm(instance=installation)
+
+    if request.method == 'POST':
+        form = InstallationForm(request.POST, instance=installation)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    context = {'form':form}
+    return render(request, 'main/installation.html', context)
+
+def updateERRV (request, pk):
+    errv = ERRV.objects.get(id=pk)
+    form = ERRVForm(instance=errv)
+
+    if request.method == 'POST':
+        form = ERRVForm(request.POST, instance=errv)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    context = {'form':form}
+    return render(request, 'main/errv.html', context)
+
 def errv(request):
     answer = ''
     error = ''
@@ -114,6 +142,13 @@ def errv(request):
         form = ERRVForm(request.POST)
         if form.is_valid():
             form.save()
+            if 'Current' in request.POST:
+                # form.type_solution
+                print("Current")
+                # Installation.objects.filter(id = ).delete()
+            elif  'Potential' in request.POST:
+                print("Potential")
+                    # Installation.objects.filter(id = request.GET.get('DeleteButtonI')).delete()
             answer = 'ERRV has been added to the databases'
         else:
             error = 'Form is not valide'
@@ -193,11 +228,11 @@ def m_avtime(request):
             #Function to change colors
             def color_change(elev):
                 if(elev == 1 ):
-                    return('green')
+                    return('blue')
                 elif(elev == 2):
                     return('yellow')
                 elif(elev == 3):
-                    return('green')
+                    return('red')
 
             #Function to change colors
             def radius_change(elev):
@@ -208,17 +243,26 @@ def m_avtime(request):
                 elif(elev == 6):
                     return 155125
 
+                    #Function to change colors
+            def radius_size(elev):
+                if(elev == 1 ):
+                    return 2
+                elif(elev == 2):
+                    return 1
+                elif(elev == 3):
+                    return 3
+
             data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
             lat2 = data2['LAT']
             lon2 = data2['LON']
             elevation2 = data2['ELEV']
 
             for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
-                folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='green',  fill_opacity = 0.2).add_to(m)
+                folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='red',  fill_opacity = 0.05).add_to(m)
 
             #Plot Markers
             for lat, lon, elevation in zip(lat, lon, elevation):
-                folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(lat)+" m", fill_color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+                folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(lat)+" m", fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
 
             m=m._repr_html_() #updated
             # context = {'my_map': m}
@@ -248,7 +292,7 @@ def m_wstime(request):
         else:
             model1(grid)
             model3()
-            errvs= ERRV.objects.filter(type_solution=203)
+            # errvs= ERRV.objects.filter(type_solution=203)
             installations = Installation.objects.order_by('id')
             m = folium.Map([62.354457, 2.377184], zoom_start=6)
 
@@ -261,11 +305,11 @@ def m_wstime(request):
             #Function to change colors
             def color_change(elev):
                 if(elev == 1 ):
-                    return('green')
+                    return('blue')
                 elif(elev == 2):
                     return('yellow')
                 elif(elev == 3):
-                    return('green')
+                    return('red')
 
             #Function to change colors
             def radius_change(elev):
@@ -276,17 +320,26 @@ def m_wstime(request):
                 elif(elev == 6):
                     return 155125
 
+                    #Function to change colors
+            def radius_size(elev):
+                if(elev == 1 ):
+                    return 2
+                elif(elev == 2):
+                    return 1
+                elif(elev == 3):
+                    return 3
+
             data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
             lat2 = data2['LAT']
             lon2 = data2['LON']
             elevation2 = data2['ELEV']
 
             for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
-                folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='green',  fill_opacity = 0.2).add_to(m)
+                folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='red',  fill_opacity = 0.05).add_to(m)
 
             #Plot Markers
             for lat, lon, elevation in zip(lat, lon, elevation):
-                folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(lat)+" m", fill_color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+                folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(lat)+" m", fill_color=color_change(elevation),color=color_change(elevation), fill_opacity = 0.9).add_to(m)
 
             m=m._repr_html_() #updated
 

@@ -16,5 +16,7 @@ urlpatterns = [
     path('wstime', views.m_wstime, name="wstime"),
     path('index',views.index,name='index'),
     path('map',views.map,name='map'),
+    path('update_installation/<str:pk>/', views.updateInstallation, name="update_installation"),
+    path('update_errv/<str:pk>/', views.updateERRV, name="update_errv"),
 
 ]
