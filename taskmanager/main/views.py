@@ -203,15 +203,28 @@ def calc(request):
         return render(request,'main/calc.html')
 
 def m_avtime(request):
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!m_risk")
+    print("_________________Average_time____________________")
     error = ''
     if  request.method == 'POST':
-
+        flag_grid=0
+        type_errv = 0
         grid = request.POST.get("grid", "")
-        if len(grid) == 0:
+        display_type = request.POST.get("display_type", None)
+        if display_type in ["DB"]:
+            type_errv = 1
+        elif display_type == "GR":
+            type_errv = 2
+            if grid == '':
+                flag_grid = 1
+
+        if (type_errv == 2 and flag_grid == 1):
             error = 'Number is not valide'
+            context = {
+                'error':error,
+                'title': "Minimizing average time"
+            }
         else:
-            model1(grid)
+            model1(grid,type_errv)
             model2()
             # errvs= ERRV.objects.filter(type_solution=202)
             # installations = Installation.objects.order_by('id')
@@ -265,15 +278,15 @@ def m_avtime(request):
                 folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(lat)+" m", fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
 
             m=m._repr_html_() #updated
-            # context = {'my_map': m}
 
-        context = {
-                # 'installations': installations,
-                'error':error,
-                'my_map': m,
-                # 'errvs': errvs,
-                'title': "Minimizing average time"
-            }
+
+            context = {
+                    # 'installations': installations,
+                    'error':error,
+                    'my_map': m,
+                    # 'errvs': errvs,
+                    'title': "Minimizing average time"
+                }
         return render(request,'main/avtime.html',context)
     else:
         context = {

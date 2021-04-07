@@ -158,12 +158,28 @@ def t_validate2(model, i,j):
         return 0
 
 
-def model1(grid):
-    print("model1=", grid)
-    pos_positions = get_pot_position(grid)
-    lent_pos_positions = len(pos_positions) - pos_positions.count(None)
+def model1(grid,type_errv):
+    print("model1=", grid, " type_errv=", type_errv)
+    if(type_errv == 2):
+        pos_positions = get_pot_position(grid)
+        lent_pos_positions = len(pos_positions) - pos_positions.count(None)
+        print(" type_errv2=", type_errv)
+    elif(type_errv == 1):
+        errvs= ERRV.objects.filter(type_solution=210)
+        pos_positions = []
+        for p in errvs.iterator():
+            d = []
+            print("p.get_lat=",p.get_lat(), "p.get_lon=",p.get_lon())
+            d.append(p.get_lat())
+            d.append(p.get_lon())
+            pos_positions.append(d)
+
+        lent_pos_positions= len(ERRV.objects.filter(type_solution=210))
+        print("lent_pos_positions",lent_pos_positions)
+        print("ERRVs",errvs)
+
+    print("pos_positions===",pos_positions)
     inst = Installation.objects.all()
-    print("!!!!!!!!!!!!!!!! FINISH model1 !!!!!!!!!!!!!!!!!!!!!!")
 
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
     filename = "Model1t.dat"
@@ -177,6 +193,7 @@ def model1(grid):
         f.write(";\n")
         f.write("set SITE  := ")
         for p in range(lent_pos_positions):
+            print("p====",p)
             f.write(str("V"+str(p)))
             f.write(str(" "))
 

@@ -6,45 +6,45 @@
 
 
 {% block content %}
-      <div class="ui main text container">
+    <div class="ui main text container">
         <h1 class="ui header">Installations</h1>
         <form class="ui large form" method="post">
             <div class="ui stacked segment">
-            {% csrf_token %}
-            <div class="ui form">
-                <div class="field">
-                    <label>Name</label>
-                    {{ form.title }}
-                </div>
-                <div class="two fields">
+                {% csrf_token %}
+                <div class="ui form">
                     <div class="field">
-                        <label>Installation Latitude</label>
-                        {{ form.latitude }}
+                        <label>Name</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Installation Latitude</label>
+                            {{ form.latitude }}
+                        </div>
+                        <div class="field">
+                            <label>Installation longitude</label>
+                            {{ form.longitude }}
+                        </div>
                     </div>
                     <div class="field">
-                        <label>Installation longitude</label>
-                        {{ form.longitude }}
+                        <label>Time Requirement </label>
+                        {{ form.r_time }}
                     </div>
-                </div>
-                <div class="field">
-                    <label>Time Requirement </label>
-                    {{ form.r_time }}
-                </div>
-                <div class="field">
-                    <label>The number of people on the installation</label>
-                    {{ form.number_of_people }}
-                </div>
-                <div class="field">
-                    <label>The probability of accident</label>
-                    {{ form.prob_accident }}
-                </div>
+                    <div class="field">
+                        <label>The number of people on the installation</label>
+                        {{ form.number_of_people }}
+                    </div>
+                    <div class="field">
+                        <label>The probability of accident</label>
+                        {{ form.prob_accident }}
+                    </div>
 
-                <button type="submit" class="ui blue  button">OK</button>
+                    <button type="submit" class="ui blue  button">OK</button>
 
-                <br>
-                <span class="ui big red text">{{ error }}</span>
-                <span class="ui big green text">{{ answer }}</span>
-            </div>
+                    <br>
+                    <span class="ui big red text">{{ error }}</span>
+                    <span class="ui big green text">{{ answer }}</span>
+                </div>
             </div>
         </form>
     </div>
