@@ -205,11 +205,17 @@ def calc(request):
 def m_avtime(request):
     print("_________________Average_time____________________")
     error = ''
+    installations = Installation.objects.order_by('id')
     if  request.method == 'POST':
         flag_grid=0
         type_errv = 0
+        ins_fix_list = 0
         grid = request.POST.get("grid", "")
         display_type = request.POST.get("display_type", None)
+        ins_fix_flag = request.POST.get("ins_fix", None)
+
+        if ins_fix_flag in ["F"]:
+            ins_fix_list = request.POST.get("inst_list", "")
         if display_type in ["DB"]:
             type_errv = 1
         elif display_type == "GR":
@@ -220,12 +226,13 @@ def m_avtime(request):
         if (type_errv == 2 and flag_grid == 1):
             error = 'Number is not valide'
             context = {
+                'installations': installations,
                 'error':error,
                 'title': "Minimizing average time"
             }
         else:
-            model1(grid,type_errv)
-            model2()
+            model1(grid,type_errv,ins_fix_list)
+            model2(ins_fix_list)
             # errvs= ERRV.objects.filter(type_solution=202)
             # installations = Installation.objects.order_by('id')
 
@@ -281,7 +288,7 @@ def m_avtime(request):
 
 
             context = {
-                    # 'installations': installations,
+                    'installations': installations,
                     'error':error,
                     'my_map': m,
                     # 'errvs': errvs,
@@ -290,21 +297,43 @@ def m_avtime(request):
         return render(request,'main/avtime.html',context)
     else:
         context = {
+            'installations': installations,
             'title': "Minimizing average time"
         }
         return render(request,'main/avtime.html',context)
 
-def m_wstime(request):
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!m_risk")
-    error = ''
-    if  request.method == 'POST':
 
+def m_wstime(request):
+    print("_________________Worst time____________________")
+    error = ''
+    installations = Installation.objects.order_by('id')
+    if  request.method == 'POST':
+        flag_grid=0
+        type_errv = 0
+        ins_fix_list = 0
         grid = request.POST.get("grid", "")
-        if len(grid) == 0:
+        display_type = request.POST.get("display_type", None)
+        ins_fix_flag = request.POST.get("ins_fix", None)
+
+        if ins_fix_flag in ["F"]:
+            ins_fix_list = request.POST.get("inst_list", "")
+        if display_type in ["DB"]:
+            type_errv = 1
+        elif display_type == "GR":
+            type_errv = 2
+            if grid == '':
+                flag_grid = 1
+
+        if (type_errv == 2 and flag_grid == 1):
             error = 'Number is not valide'
+            context = {
+                'installations': installations,
+                'error':error,
+                'title': "Minimizing average time"
+            }
         else:
-            model1(grid)
-            model3()
+            model1(grid,type_errv,ins_fix_list)
+            model3(ins_fix_list)
             # errvs= ERRV.objects.filter(type_solution=203)
             installations = Installation.objects.order_by('id')
             m = folium.Map([62.354457, 2.377184], zoom_start=6)
@@ -357,17 +386,18 @@ def m_wstime(request):
             m=m._repr_html_() #updated
 
 
-        context = {
-            # 'installations': installations,
-            # 'errvs':errvs,
-            'my_map': m,
-            'error':error,
-            'title': "Worst-time minimization"
-        }
+            context = {
+                'installations': installations,
+                # 'errvs':errvs,
+                'my_map': m,
+                'error':error,
+                'title': "Worst-time minimization"
+            }
         return render(request,'main/wstime.html',context)
 
     else:
         context = {
+            'installations': installations,
             'title': "Worst-time minimization"
         }
         return render(request,'main/wstime.html',context)

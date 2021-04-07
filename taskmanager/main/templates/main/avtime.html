@@ -12,7 +12,7 @@
             <div class="ui stacked segment">
                 {% csrf_token %}
                 <div class="ui form">
-                    <p>You can find the optimal positions for rescue vessels while minimizing the total time.</p>
+                    <p>You can find the optimal positions for rescue vessels minimize the total time.</p>
 
                     <p>Information for potential positions of ERRVs can be taken from the database (select radio button
                         1).</p>
@@ -32,17 +32,19 @@
                         <label class="form-check-label" for="flexRadioDefault2">
                             Grid
                         </label>
-{#                        <label>Grid size</label><br>#}
                         <input class="form-control" id="grid" placeholder="Enter grid size, km" type="text" name="grid"><br><br>
-                        <input type="submit" value="Get solution" class="ui blue  button" name="average_time">
                     </div>
-{#                    <div class="field">#}
-{#                        <label for="l_box1"><input type="radio" name="display_type" value="flexRadioDefault1" id="l_box1">Data from database</label>#}
-{#                        <label for="d_box2"><input type="radio" name="display_type" value="flexRadioDefault2" id="d_box2" checked>Grid</label>#}
-{#                        <label>Grid size</label><br>#}
-{#                        <input class="form-control" id="grid" placeholder="Enter grid size, km" type="text" name="grid"><br><br>#}
-{#                        <input type="submit" value="Get solution" class="ui blue  button" name="average_time">#}
-{#                    </div>#}
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="ins_fix" value="F" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">Fixed position</label>
+                    </div>
+                    <select name="inst_list" class="filter-selectbox">
+                        {% for installation in installations %}
+                            <option value="{{ installation.id }}">{{ installation.title }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <input type="submit" value="Get solution" class="ui blue  button" name="average_time">
 
                     <br>
                     <span class="ui big red text">{{ error }}</span>
@@ -51,40 +53,6 @@
             </div>
         </form>
     </div>
-                    {#                    <div class="ui form">#}
-                    {#                        <div class="grouped fields">#}
-                    {##}
-                    {##}
-                    {#                            <label>Choose a basis for potential ERRV positions</label>#}
-                    {#                            <div class="field">#}
-                    {#                                <div class="ui radio checkbox">#}
-                    {#                                    <input type="radio" id="RB_DB" name="example2">#}
-                    {#                                    <label>Data from database</label>#}
-                    {#                                </div>#}
-                    {#                            </div>#}
-                    {#                            <div class="field">#}
-                    {#                                <div class="field">#}
-                    {#                                    <div class="ui radio checkbox">#}
-                    {#                                        <input type="radio" id="RB_GR" name="frequency" checked="checked">#}
-                    {#                                        <label>Grid</label>#}
-                    {#                                    </div>#}
-                    {#                                    <input class="form-control" id="grid" placeholder="Enter grid size, km" type="text"#}
-                    {#                                           name="grid">#}
-                    {#                                </div>#}
-                    {#                            </div>#}
-                    {#                            <br>#}
-                    {##}
-                    {#                        </div>#}
-                    {#                    </div>#}
-                    {#                    <br>#}
-                    {#                    <div class="field">#}
-                    {#                    <label>Grid size</label><br>#}
-                    {#                    <input class="form-control" id="grid" type="text" name="grid"><br><br>#}
-                    {#                        <input type="submit" value="Get solution" class="ui blue  button" name="average_time">#}
-                    {#                    </div>#}
-                    {#                </div>#}
-
-
     {% if my_map %}
         <div class="ui fluid raised card" style="margin-top:30px">
             <div class="content">

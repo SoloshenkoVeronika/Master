@@ -6,65 +6,67 @@
 
 
 {% block content %}
-
     <div class="ui main text container">
-    <h1 class="ui header">!!!!!!!!!!!!!!!!!!!!!</h1>
-    <form class="ui large form" method="post">
-        <div class="ui stacked segment">
-            {% csrf_token %}
-            <div class="ui form">
-                <div class="field">
-                    <label>Grid size</label><br>
-                    <input class="form-control" id="grid" type="text" name="grid"><br><br>
-                    <input type="submit" value="Get solution" class="positive ui button" name="average_time">
-                </div>
-            </div>
+        <h1 class="ui header">Minimization Worst-time Coverage Problem</h1>
+        <form class="ui large form" method="post">
+            <div class="ui stacked segment">
+                {% csrf_token %}
+                <div class="ui form">
+                    <p>You can find the optimal positions for rescue vessels and minimize the worst time.</p>
 
-            <br>
-            <span class="ui big red text">{{ error }}</span>
-            <span class="ui big green text">{{ answer }}</span>
-        </div>
-    </form>
-    </div>
+                    <p>Information for potential positions of ERRVs can be taken from the database (select radio button
+                        1).</p>
+                    <p>Also potential positions of ERRVs can be calculated based on a grid with a given
+                        distance (select radio button 2 and enter distance).</p>
+                    <label>Choose a basis for potential ERRV positions</label>
 
-    <div class="ui fluid raised card" style="margin-top:30px">
-        <div class="content">
-            <!--<div class="header">-->
-            <!--Worlds Capitals-->
-            <!--</div>-->
-            <div class="description">
-                <div class="ui bulleted list">
-                    <div class="item">The most busiest airport in each country</div>
-                    <div class="item">Data from <a
-                            href="https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Europe"> Wikipedia</a>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="display_type" value="DB">
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            Data from database
+                        </label>
                     </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="display_type" value="GR"
+                               checked>
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Grid
+                        </label>
+                        <input class="form-control" id="grid" placeholder="Enter grid size, km" type="text" name="grid"><br><br>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="ins_fix" value="F" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">Fixed position</label>
+                    </div>
+                    <select name="inst_list" class="filter-selectbox">
+                        {% for installation in installations %}
+                            <option value="{{ installation.id }}">{{ installation.title }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <input type="submit" value="Get solution" class="ui blue  button" name="average_time">
+
+                    <br>
+                    <span class="ui big red text">{{ error }}</span>
+                    <span class="ui big green text">{{ answer }}</span>
                 </div>
             </div>
-        </div>
-        <div class="image">
-            <!-- Map with unique DOM id -->
-            {{ my_map|safe }}
-        </div>
-        <div class="extra content">
-            <small>
-                ArcGIS</a> &copy; <a href="https://www.arcgis.com/home/group.html?id=702026e41f6641fb85da88efe79dc166"
-                                     target="_blank">World_Topo_Map</a> </a>
-            </small>
-        </div>
-        <div class="extra content">
-            <p>
-                This is a list of the 100 busiest airports in Europe, ranked by total passengers per year, including
-                both terminal and transit passengers. Data is for 2019 and is sourced individually for each airport and
-                from a variety of sources, normally the national aviation authority statistics, or those of the airport
-                operator.
-            <p>
-                Source: Wikipedia
-            </p>
-        </div>
+        </form>
     </div>
+    {% if my_map %}
+        <div class="ui fluid raised card" style="margin-top:30px">
+            <div class="content">
+                <div class="header text-center">
+                    Solution
+                </div>
+            </div>
+            <div class="image">
+                <!-- Map with unique DOM id -->
+                <div id="map-1" style="width:100%;min-height:625px;">{{ my_map|safe }}</div>
+            </div>
 
-
-
+        </div>
+    {% endif %}
 {% endblock %}
 
 
