@@ -217,16 +217,17 @@ def model1(grid,type_errv,ins_fix_list):
         f.write(";\n")
         f.write("param radius := 6371;\n")
         f.write("param coef_from := 1.825;\n")
-        f.write("param average_speed := 17;\n")
+        f.write("param average_speed := 14;\n")
         f.write("param :     arrive_time xcord_i ycord_i:= \n")
         fm.write("ELEV,LAT,LON\n")
         for p in inst:
             time = p.get_r_time()
+            time=time - 1
             # if (time==3):
             #     time = 5
             # else:
             #     time = p.get_r_time()
-            f.write(str(p.get_title())+" "+str(time-1)+"   "+str(p.get_lat())+"   "+str(p.get_lon())+"\n")
+            f.write(str(p.get_title())+" "+str(time)+"   "+str(p.get_lat())+"   "+str(p.get_lon())+"\n")
             fm.write(str(1)+",   "+str(p.get_lat())+",   "+str(p.get_lon())+"\n")
         f.write(";\n")
         f.write("param : 	xcord_s ycord_s:= \n")
@@ -381,7 +382,7 @@ def model1(grid,type_errv,ins_fix_list):
         f.write(";\n")
         f.write("param radius := 6371;\n")
         f.write("param coef_from := 1.825;\n")
-        f.write("param average_speed := 14;\n")
+        f.write("param average_speed := 17;\n")
         f.write("param vessels_number := " + str(count_errv))
         f.write(";\n")
 
@@ -541,10 +542,20 @@ def model2(ins_fix_list):
             f.write(str(instance.y[j].value)+ " ")
         f.write("\n")
         fmerrv.write("ELEV,LAT,LON\n")
+
         for j in instance.SITE:
             if(instance.y[j].value==1):
                 f.write("O_" +str(j)+ " "+str(instance.xcord_s[j])+ " "+str(instance.ycord_s[j])+" 1\n")
-                fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                # ______________ -start- Only for installation as errv
+                if (ins_fix_list != 0):
+                    if (j == (str('V')+str(number_fix_errv))):
+                        print("j=",j,"  model.y[str('V')+str(number_fix_errv)]=", str('V')+str(number_fix_errv))
+                        fm.write(str(100)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                    else:
+                        fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                    # ______________ -end-
+                else:
+                    fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                 fm.write("\n")
                 fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                 fmerrv.write("\n")
@@ -553,6 +564,7 @@ def model2(ins_fix_list):
                 fmerrv.write(str(6)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                 fmerrv.write("\n")
         f.write("\n")
+
     ERRV.objects.filter(type_solution=202).delete()
     for j in instance.SITE:
         if(instance.y[j].value==1):
@@ -711,7 +723,16 @@ def model3(ins_fix_list):
             #print (instance.y[j].value)
             if (instance.y[j].value == 1.0):
                 f.write(str(number_errv))
-                fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                # ______________ -start- Only for installation as errv
+                if (ins_fix_list != 0):
+                    if (j == (str('V')+str(number_fix_errv))):
+                        print("j=",j,"  model.y[str('V')+str(number_fix_errv)]=", str('V')+str(number_fix_errv))
+                        fm.write(str(100)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                    else:
+                        fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                        # ______________ -end-
+                else:
+                    fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                 fm.write("\n")
                 fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                 fmerrv.write("\n")

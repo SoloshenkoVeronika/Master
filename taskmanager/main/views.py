@@ -253,6 +253,8 @@ def m_avtime(request):
                     return('yellow')
                 elif(elev == 3):
                     return('red')
+                elif(elev == 100):
+                    return('purple')
 
             #Function to change colors
             def radius_change(elev):
@@ -269,7 +271,7 @@ def m_avtime(request):
                     return 2
                 elif(elev == 2):
                     return 1
-                elif(elev == 3):
+                elif(elev == 3 or elev == 100):
                     return 3
 
             data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
@@ -352,6 +354,8 @@ def m_wstime(request):
                     return('yellow')
                 elif(elev == 3):
                     return('red')
+                elif(elev == 100):
+                    return('purple')
 
             #Function to change colors
             def radius_change(elev):
@@ -364,7 +368,7 @@ def m_wstime(request):
 
                     #Function to change colors
             def radius_size(elev):
-                if(elev == 1 ):
+                if(elev == 1 or elev == 100):
                     return 2
                 elif(elev == 2):
                     return 1

@@ -12,7 +12,7 @@
             <div class="ui stacked segment">
                 {% csrf_token %}
                 <div class="ui form">
-                    <p>You can find the optimal positions for rescue vessels minimize the total time.</p>
+                    <p>You can find the optimal positions for rescue vessels and minimize the total time.</p>
 
                     <p>Information for potential positions of ERRVs can be taken from the database (select radio button
                         1).</p>
@@ -38,6 +38,7 @@
                         <input type="checkbox" class="form-check-input" name="ins_fix" value="F" id="exampleCheck1">
                         <label class="form-check-label" for="exampleCheck1">Fixed position</label>
                     </div>
+                <br>
                     <select name="inst_list" class="filter-selectbox">
                         {% for installation in installations %}
                             <option value="{{ installation.id }}">{{ installation.title }}</option>
