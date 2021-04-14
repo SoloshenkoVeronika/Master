@@ -210,6 +210,7 @@ def m_avtime(request):
         flag_grid=0
         type_errv = 0
         ins_fix_list = 0
+        flag_model4 = 0
         grid = request.POST.get("grid", "")
         display_type = request.POST.get("display_type", None)
         ins_fix_flag = request.POST.get("ins_fix", None)
@@ -232,7 +233,7 @@ def m_avtime(request):
             }
         else:
             model1(grid,type_errv,ins_fix_list)
-            model2(ins_fix_list)
+            model2(ins_fix_list,flag_model4)
             # errvs= ERRV.objects.filter(type_solution=202)
             # installations = Installation.objects.order_by('id')
 
@@ -313,6 +314,7 @@ def m_wstime(request):
         flag_grid=0
         type_errv = 0
         ins_fix_list = 0
+        flag_model4 = 0
         grid = request.POST.get("grid", "")
         display_type = request.POST.get("display_type", None)
         ins_fix_flag = request.POST.get("ins_fix", None)
@@ -335,7 +337,7 @@ def m_wstime(request):
             }
         else:
             model1(grid,type_errv,ins_fix_list)
-            model3(ins_fix_list)
+            model3(ins_fix_list,flag_model4)
             # errvs= ERRV.objects.filter(type_solution=203)
             installations = Installation.objects.order_by('id')
             m = folium.Map([62.354457, 2.377184], zoom_start=6)
@@ -485,6 +487,110 @@ def m_risk3(request):
         }
         return render(request,'main/risk2.html',context)
 
+def multi(request):
+    print("_________________Multi____________________")
+    error = ''
+    installations = Installation.objects.order_by('id')
+    flag_model4 = 1
+    if  request.method == 'POST':
+        flag_grid=0
+        type_errv = 0
+        ins_fix_list = 0
+        grid = request.POST.get("grid", "")
+        display_type = request.POST.get("display_type", None)
+        ins_fix_flag = request.POST.get("ins_fix", None)
+        wa = request.POST.get("wa", "")
+        ww = request.POST.get("ww", "")
+
+
+        if ins_fix_flag in ["F"]:
+            ins_fix_list = request.POST.get("inst_list", "")
+        if display_type in ["DB"]:
+            type_errv = 1
+        elif display_type == "GR":
+            type_errv = 2
+            if grid == '':
+                flag_grid = 1
+
+        if (type_errv == 2 and flag_grid == 1):
+            error = 'Number is not valide'
+            context = {
+                'installations': installations,
+                'error':error,
+                'title': "Minimizing average time"
+            }
+        else:
+            model1(grid,type_errv,ins_fix_list)
+            model2(ins_fix_list,flag_model4)
+            model3(ins_fix_list,flag_model4)
+            model4(ins_fix_list,wa,ww)
+            #creation of map comes here + business logic
+            m = folium.Map([62.354457, 2.377184], zoom_start=6)
+
+            #Load Data
+            data = pd.read_csv('main\\recources\\Data_Map.txt')
+            lat = data['LAT']
+            lon = data['LON']
+            elevation = data['ELEV']
+
+            #Function to change colors
+            def color_change(elev):
+                if(elev == 1 ):
+                    return('blue')
+                elif(elev == 2):
+                    return('yellow')
+                elif(elev == 3):
+                    return('red')
+                elif(elev == 100):
+                    return('purple')
+
+            #Function to change colors
+            def radius_change(elev):
+                if(elev == 3 ):
+                    return 62050
+                elif(elev == 5):
+                    return 124100
+                elif(elev == 6):
+                    return 155125
+
+                    #Function to change colors
+            def radius_size(elev):
+                if(elev == 1 ):
+                    return 2
+                elif(elev == 2):
+                    return 1
+                elif(elev == 3 or elev == 100):
+                    return 3
+
+            data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
+            lat2 = data2['LAT']
+            lon2 = data2['LON']
+            elevation2 = data2['ELEV']
+
+            for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
+                folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='red',  fill_opacity = 0.05).add_to(m)
+
+            #Plot Markers
+            for lat, lon, elevation in zip(lat, lon, elevation):
+                folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(lat)+" m", fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+
+            m=m._repr_html_() #updated
+
+
+            context = {
+                'installations': installations,
+                'error':error,
+                'my_map': m,
+                # 'errvs': errvs,
+                'title': "Multi-objective model"
+            }
+        return render(request,'main/multi.html',context)
+    else:
+        context = {
+            'installations': installations,
+            'title': "Multi-objective model"
+        }
+        return render(request,'main/multi.html',context)
 
 def registerPage(request):
     if request.user.is_authenticated:

@@ -1,0 +1,86 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="ui main text container">
+        <h1 class="ui header">Multi-objective model</h1>
+        <form class="ui large form" method="post">
+            <div class="ui stacked segment">
+                {% csrf_token %}
+                <div class="ui form">
+                    <p>You can find the optimal positions for rescue vessels and minimize the total time.</p>
+
+                    <p>Information for potential positions of ERRVs can be taken from the database (select radio button
+                        1).</p>
+                    <p>Also potential positions of ERRVs can be calculated based on a grid with a given
+                        distance (select radio button 2 and enter distance).</p>
+                    <label>Choose a basis for potential ERRV positions</label>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="display_type" value="DB">
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            Data from database
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="display_type" value="GR"
+                               checked>
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Grid
+                        </label>
+                        <input class="form-control" id="grid" placeholder="Enter grid size, km" type="text" name="grid"><br><br>
+                    </div>
+
+
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Average weight</label>
+                            <input class="form-control" id="grid" placeholder="Average weight"type="text" name="wa"><br>
+                        </div>
+                        <div class="field">
+                            <label>Worst weight</label>
+                            <input class="form-control" id="grid" placeholder="Worst weight" type="text" name="ww"><br>
+                        </div>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="ins_fix" value="F" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">Fixed position</label>
+                    </div>
+                    <br>
+                    <select name="inst_list" class="filter-selectbox">
+                        {% for installation in installations %}
+                            <option value="{{ installation.id }}">{{ installation.title }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <input type="submit" value="Get solution" class="ui blue  button" name="average_time">
+
+                    <br>
+                    <span class="ui big red text">{{ error }}</span>
+                    <span class="ui big green text">{{ answer }}</span>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% if my_map %}
+        <div class="ui fluid raised card" style="margin-top:30px">
+            <div class="content">
+                <div class="header text-center">
+                    Solution
+                </div>
+            </div>
+            <div class="image">
+                <!-- Map with unique DOM id -->
+                <div id="map-1" style="width:100%;min-height:625px;">{{ my_map|safe }}</div>
+            </div>
+
+        </div>
+    {% endif %}
+
+{% endblock %}
+

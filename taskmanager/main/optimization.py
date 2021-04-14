@@ -217,7 +217,7 @@ def model1(grid,type_errv,ins_fix_list):
         f.write(";\n")
         f.write("param radius := 6371;\n")
         f.write("param coef_from := 1.825;\n")
-        f.write("param average_speed := 14;\n")
+        f.write("param average_speed := 17;\n")
         f.write("param :     arrive_time xcord_i ycord_i:= \n")
         fm.write("ELEV,LAT,LON\n")
         for p in inst:
@@ -351,7 +351,8 @@ def model1(grid,type_errv,ins_fix_list):
     filename2 = "Model2t.dat"
     filename3 = "Model3t.dat"
     filename4 = "Model4t.dat"
-    filename5 = "Modelpotpos.dat"
+    filename5 = "Model5t.dat"
+    filename6 = "Modelpotpos.dat"
     FileFullPath2 = os.path.join(full_path, filename2)
     target2 = FileFullPath2
     FileFullPath3 = os.path.join(full_path, filename3)
@@ -360,16 +361,20 @@ def model1(grid,type_errv,ins_fix_list):
     target4 = FileFullPath4
     FileFullPath5 = os.path.join(full_path, filename5)
     target5 = FileFullPath5
+    FileFullPath6 = os.path.join(full_path, filename6)
+    target6 = FileFullPath6
     shutil.copyfile(original, target2)
     shutil.copyfile(original, target3)
     shutil.copyfile(original, target4)
-    with open(FileFullPath2, 'a') as f:
-        f.write("param vessels_number := " + str(count_errv))
-        f.write(";\n")
-    with open(FileFullPath3, 'a') as f:
-        f.write("param vessels_number := " + str(count_errv))
-        f.write(";\n")
-    with open(FileFullPath4, 'w') as f:
+    shutil.copyfile(original, target5)
+    with open(FileFullPath2, 'a') as f2,open(FileFullPath3, 'a') as f3,open(FileFullPath4, 'a') as f4:
+        f2.write("param vessels_number := " + str(count_errv))
+        f2.write(";\n")
+        f3.write("param vessels_number := " + str(count_errv))
+        f3.write(";\n")
+        f4.write("param vessels_number := " + str(count_errv))
+        f4.write(";\n")
+    with open(FileFullPath5, 'w') as f:
         f.write("set INSTALLATION := ")
         for p in inst:
             f.write(str(p.get_title())+" ")
@@ -395,7 +400,7 @@ def model1(grid,type_errv,ins_fix_list):
 
     print("Done1")
 
-    with open(FileFullPath5, 'w') as f:
+    with open(FileFullPath6, 'w') as f:
         i=0
         for p in pos_positions:
             f.write(str("V"+str(i)+" "+(str(pos_positions.__getitem__(i))).replace('[','').replace(']','').replace(',','')+"\n"))
@@ -403,7 +408,7 @@ def model1(grid,type_errv,ins_fix_list):
 
 
     # i=0
-    # with open(FileFullPath5, 'w') as f:
+    # with open(FileFullPath6, 'w') as f:
     #     for j in instance.SITE:
     #         if(instance.y[j].value==1):
     #             f.write(str("V"+str(i)+" "+str(instance.ycord_s[j])+" "+str(instance.xcord_s[j])+"\n"))
@@ -413,7 +418,7 @@ def model1(grid,type_errv,ins_fix_list):
     return count_errv
 
 
-def model2(ins_fix_list):
+def model2(ins_fix_list,flag_model4):
     model = AbstractModel()
 
     model.INSTALLATION = Set()
@@ -547,23 +552,33 @@ def model2(ins_fix_list):
             if(instance.y[j].value==1):
                 f.write("O_" +str(j)+ " "+str(instance.xcord_s[j])+ " "+str(instance.ycord_s[j])+" 1\n")
                 # ______________ -start- Only for installation as errv
-                if (ins_fix_list != 0):
-                    if (j == (str('V')+str(number_fix_errv))):
-                        print("j=",j,"  model.y[str('V')+str(number_fix_errv)]=", str('V')+str(number_fix_errv))
-                        fm.write(str(100)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                if flag_model4 != 1:
+                    if (ins_fix_list != 0):
+                        if (j == (str('V')+str(number_fix_errv))):
+                            print("j=",j,"  model.y[str('V')+str(number_fix_errv)]=", str('V')+str(number_fix_errv))
+                            fm.write(str(100)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                        else:
+                            fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                        # ______________ -end-
                     else:
                         fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
-                    # ______________ -end-
-                else:
-                    fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
-                fm.write("\n")
-                fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
-                fmerrv.write("\n")
-                fmerrv.write(str(5)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
-                fmerrv.write("\n")
-                fmerrv.write(str(6)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
-                fmerrv.write("\n")
+                    fm.write("\n")
+                    fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                    fmerrv.write("\n")
+                    fmerrv.write(str(5)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                    fmerrv.write("\n")
+                    fmerrv.write(str(6)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                    fmerrv.write("\n")
         f.write("\n")
+
+    #____________start  .dat file for multi (model4)__________
+
+    filename4 = "Model4t.dat"
+    FileFullPath4 = os.path.join(full_path, filename4)
+    with open(FileFullPath4, 'a') as f4:
+        f4.write("param goal_avg := "+str(value(instance.obj))+";\n")
+    #____________end  .dat file for multi (model4)__________
+
 
     ERRV.objects.filter(type_solution=202).delete()
     for j in instance.SITE:
@@ -573,7 +588,7 @@ def model2(ins_fix_list):
 
     print('Done2')
 
-def model3(ins_fix_list):
+def model3(ins_fix_list,flag_model4):
 
     model = AbstractModel()
 
@@ -723,6 +738,229 @@ def model3(ins_fix_list):
             #print (instance.y[j].value)
             if (instance.y[j].value == 1.0):
                 f.write(str(number_errv))
+                if flag_model4 != 1:
+                    # ______________ -start- Only for installation as errv
+                    if (ins_fix_list != 0):
+                        if (j == (str('V')+str(number_fix_errv))):
+                            print("j=",j,"  model.y[str('V')+str(number_fix_errv)]=", str('V')+str(number_fix_errv))
+                            fm.write(str(100)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                        else:
+                            fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                            # ______________ -end-
+                    else:
+                        fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                    fm.write("\n")
+                    fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                    fmerrv.write("\n")
+                    fmerrv.write(str(5)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                    fmerrv.write("\n")
+                    fmerrv.write(str(6)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                    fmerrv.write("\n")
+                    f.write("\n")
+            number_errv+=1
+    ERRV.objects.filter(type_solution=203).delete()
+    for j in instance.SITE:
+        if(instance.y[j].value==1):
+            errv = ERRV(title="O3_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=203)
+            errv.save()
+
+#____________start  .dat file for multi (model4)__________
+
+    filename4 = "Model4t.dat"
+    FileFullPath4 = os.path.join(full_path, filename4)
+    with open(FileFullPath4, 'a') as f4:
+        f4.write("param goal_worst := "+str(value(instance.obj))+";\n")
+#____________end  .dat file for multi (model4)__________
+
+
+    filename_resultserrv = "Model1t.sol"
+    FileFullPathResults = os.path.join(full_path, filename_resultserrv)
+    # with open(FileFullPathResults, 'r') as f:
+    #     for x in f:
+    #         errvs = ERRV.objects.filter(id=int(x))
+    # # errvs = ERRV.objects.filter(id=2)
+    # errvs = ERRV.objects.order_by('id')
+
+def model4(ins_fix_list,wa,ww):
+
+    full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
+    #____________start  .dat file for multi (model4)__________
+
+    filename4 = "Model4t.dat"
+    FileFullPath4 = os.path.join(full_path, filename4)
+    with open(FileFullPath4, 'a') as f4:
+        f4.write("param e_avg := "+str(wa)+";\n")
+        f4.write("param e_worst := "+str(ww)+";\n")
+    #____________end  .dat file for multi (model4)__________
+
+    model = AbstractModel()
+
+    model.INSTALLATION = Set()
+    model.SITE = Set()
+
+    model.arrive_time = Param(model.INSTALLATION)
+    model.coef_from = Param()
+    model.average_speed = Param()
+
+    model.xcord_s = Param(model.SITE)
+    model.ycord_s = Param(model.SITE)
+    model.xcord_i = Param(model.INSTALLATION)
+    model.ycord_i = Param(model.INSTALLATION)
+    model.radius = Param()
+    model.vessels_number= Param()
+
+    model.goal_avg= Param()
+    model.goal_worst= Param()
+    model.e_avg= Param()
+    model.e_worst= Param()
+
+    model.distance = Param(model.INSTALLATION, model.SITE, initialize=get_distance)
+    model.distance_time= Param(model.INSTALLATION, model.SITE, initialize=get_distance_time)
+    model.aa = Param(model.INSTALLATION, model.SITE, initialize=t_validate2)
+
+    # the next line declares a variable indexed by the set J
+    model.y = Var(model.SITE, domain = Binary)
+    model.x = Var(model.INSTALLATION,model.SITE, domain = Binary)
+    model.t = Var(domain = NonNegativeReals) #variable for worst case
+    model.q = Var(domain = NonNegativeReals) #combined target value
+
+    def obj_expression(model):
+        return model.q
+    model.obj = Objective(rule=obj_expression, sense=minimize)
+
+
+    def Balance(model,i):
+        return sum(model.aa[i,j]*model.x[i,j] for j in model.SITE) >= 1
+
+    def Balance2(model):
+        return sum(model.y[j] for j in model.SITE) == model.vessels_number
+
+    def Balance3(model,i,j):
+        return model.x[i,j] <= model.y[j]
+
+    def Balance4(model,i,j):
+        return model.distance_time[i,j]*model.x[i,j] <= model.t
+
+    def Balance5(model):
+        return model.e_avg * ( (-1) * model.goal_avg + sum (model.x[i,j]*model.distance_time[i,j] for i in model.INSTALLATION for j in model.SITE))/model.goal_avg <= model.q
+    def Balance6(model):
+        return model.e_worst * (model.t - model.goal_worst)/model.goal_worst <= model.q
+
+    def Balance7(model):
+        return 0 <= model.q
+
+
+
+    model.con1 = Constraint(model.INSTALLATION, rule=Balance)
+    model.con2 = Constraint(rule=Balance2)
+    model.con3 = Constraint(model.INSTALLATION,model.SITE,rule=Balance3)
+    model.con4 = Constraint(model.INSTALLATION,model.SITE,rule=Balance4)
+    model.con5 = Constraint(rule=Balance5)
+    model.con6 = Constraint(rule=Balance6)
+    model.con7 = Constraint(rule=Balance7)
+
+    # ______________ -start- Only for installation as errv
+    if (ins_fix_list != 0):
+        def Balance_Fix(model):
+            return (model.y[str('V')+str(number_fix_errv)] == 1)
+        model.con5 = Constraint(rule=Balance_Fix)
+    # ______________ -end-
+
+    # load data
+    data = DataPortal()
+    data.load(filename='main\\recources\\Model4t.dat', set=model.INSTALLATION)
+    data.load(filename='main\\recources\\Model4t.dat', set=model.SITE)
+    data.load(filename='main\\recources\\Model4t.dat', param=(model.distance,
+                                                              model.arrive_time,
+                                                              model.coef_from,
+                                                              model.average_speed,
+                                                              model.xcord_s,
+                                                              model.ycord_s,
+                                                              model.xcord_i,
+                                                              model.ycord_i,
+                                                              model.vessels_number,
+                                                              model.goal_avg,
+                                                              model.goal_worst,
+                                                              model.e_avg,
+                                                              model.e_worst))
+
+    # create a model instance and optimise
+    instance = model.create_instance(data)
+
+    solverpath_exe='main\\recources\\cbc.exe' #does not need to be directly on c drive
+
+    opt = SolverFactory('cbc',executable=solverpath_exe)
+    results = opt.solve(instance)
+    instance.solutions.store_to(results)
+    #results.write()
+    #instance.display()
+
+    # if (results.solver.status == SolverStatus.ok) and (results.solver.termination_condition == TerminationCondition.optimal):
+    #     print('___aa___')
+    #     for i in instance.INSTALLATION:
+    #         for j in instance.SITE:
+    #             print(instance.aa[i,j] ,end =" ")
+    #         print("")
+    #     print('___x___')
+    #     for i in instance.INSTALLATION:
+    #         for j in instance.SITE:
+    #             print(instance.x[i,j].value ,end =" ")
+    #         print("")
+    #     print('___y___')
+    #     for j in instance.SITE:
+    #         print('y[',j,']=' , instance.y[j].value)
+    #     print('___Total cost___')
+    #     print(value(instance.obj))
+    #     #print('Do something when the solution in optimal and feasible')
+    #
+    #
+    # elif (results.solver.termination_condition == TerminationCondition.infeasible):
+    #     print('Model is infeasible')
+    # else:
+    #     # Something else is wrong
+    #     print('Solver Status: ',  result.solver.status)
+
+
+    filename_results = "Model4t.sol"
+    FileFullPathResults = os.path.join(full_path, filename_results)
+
+    with open(FileFullPathResults, 'w') as f:
+        f.write("Total cost="+str(value(instance.obj))+"\n")
+        f.write("Coverage parameter="+"\n")
+        for i in instance.INSTALLATION:
+            for j in instance.SITE:
+                f.write(str(instance.aa[i,j])+ " ")
+            f.write("\n")
+        f.write("\n")
+        f.write("X="+"\n")
+        for i in instance.INSTALLATION:
+            for j in instance.SITE:
+                f.write(str(instance.x[i,j].value)+ " ")
+            f.write("\n")
+        f.write("\n")
+        f.write("Y=")
+        for j in instance.SITE:
+            f.write(str(instance.y[j].value)+ " ")
+        f.write("\n")
+        for j in instance.SITE:
+            if(instance.y[j].value==1):
+                f.write("O_" +str(j)+ " "+str(instance.xcord_s[j])+ " "+str(instance.ycord_s[j])+" 1 \n")
+
+    full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
+    filename_resultserrv = "Model4terrv.sol"
+    FileFullPathResults = os.path.join(full_path, filename_resultserrv)
+    filename_results_map = "Data_Map.txt"
+    FileFullPathMap = os.path.join(full_path, filename_results_map)
+    filename_results_map_errv = "Data_Map_ERRV.txt"
+    FileFullPathMap_errv = os.path.join(full_path, filename_results_map_errv)
+
+    number_errv = 1
+    with open(FileFullPathResults, 'w') as f,open(FileFullPathMap, 'a') as fm,open(FileFullPathMap_errv, 'w') as fmerrv:
+        fmerrv.write("ELEV,LAT,LON\n")
+        for j in instance.SITE:
+            #print (instance.y[j].value)
+            if (instance.y[j].value == 1.0):
+                f.write(str(number_errv))
                 # ______________ -start- Only for installation as errv
                 if (ins_fix_list != 0):
                     if (j == (str('V')+str(number_fix_errv))):
@@ -742,31 +980,26 @@ def model3(ins_fix_list):
                 fmerrv.write("\n")
                 f.write("\n")
             number_errv+=1
-    ERRV.objects.filter(type_solution=203).delete()
+    ERRV.objects.filter(type_solution=204).delete()
     for j in instance.SITE:
         if(instance.y[j].value==1):
-            errv = ERRV(title="O3_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=203)
+            errv = ERRV(title="O3_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=204)
             errv.save()
 
-    filename_resultserrv = "Model1t.sol"
-    FileFullPathResults = os.path.join(full_path, filename_resultserrv)
-    # with open(FileFullPathResults, 'r') as f:
-    #     for x in f:
-    #         errvs = ERRV.objects.filter(id=int(x))
-    # # errvs = ERRV.objects.filter(id=2)
-    # errvs = ERRV.objects.order_by('id')
+
+    print("Done4")
 
 def model_risk(wr,wt):
 
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
 
-    filename2 = "Model4t.dat"
-    FileFullPath42 = os.path.join(full_path, filename2)
+    filename2 = "Model5t.dat"
+    FileFullPath52 = os.path.join(full_path, filename2)
 
     filenamepos = "Modelpotpos.dat"
     FileFullPathPos = os.path.join(full_path, filenamepos)
 
-    # with open(FileFullPath4,'r+') as fr,open(FileFullPath42,'w') as fw:
+    # with open(FileFullPath5,'r+') as fr,open(FileFullPath52,'w') as fw:
     #     for line in fr:
     #         x = line.find('param : 	xcord_s ycord_s:= ')
     #         if(x==-1):
@@ -779,7 +1012,7 @@ def model_risk(wr,wt):
     filenameprob = "Probability.txt"
     FileFullPathProb = os.path.join(full_path, filenameprob)
 
-    with open(FileFullPathPos, 'r') as f1, open(FileFullPathProb, 'r') as f2, open(FileFullPath42, 'a') as f3:
+    with open(FileFullPathPos, 'r') as f1, open(FileFullPathProb, 'r') as f2, open(FileFullPath52, 'a') as f3:
         f3.write("param : 	xcord_s ycord_s  vulnerability := ")
         f3.write("\n")
         for p in zip(f1, f2):
@@ -854,9 +1087,9 @@ def model_risk(wr,wt):
 
     # load data
     data = DataPortal()
-    data.load(filename='main\\recources\\Model4t.dat', set=model.INSTALLATION)
-    data.load(filename='main\\recources\\Model4t.dat', set=model.SITE)
-    data.load(filename='main\\recources\\Model4t.dat', param=(model.distance,
+    data.load(filename='main\\recources\\Model5t.dat', set=model.INSTALLATION)
+    data.load(filename='main\\recources\\Model5t.dat', set=model.SITE)
+    data.load(filename='main\\recources\\Model5t.dat', param=(model.distance,
                                                               model.arrive_time,
                                                               model.coef_from,
                                                               model.average_speed,
@@ -910,7 +1143,7 @@ def model_risk(wr,wt):
     print('Done4')
 
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
-    filename_results = "Model4t.sol"
+    filename_results = "Model5t.sol"
     FileFullPathResults = os.path.join(full_path, filename_results)
 
     with open(FileFullPathResults, 'w') as f:

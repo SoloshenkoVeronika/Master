@@ -1,8 +1,8 @@
 set INSTALLATION := Installation_1 Installation_2 Installation_3 Installation_4 Installation_5 Installation_6 Installation_7 Installation_8 Installation_9 Installation_11 Installation_12 Installation_14 Installation_19 Installation_21 Installation_22 Installation_23 Installation_24 Installation_25 Installation_28 Installation_29 Installation_30 Installation_31 Installation_32 ;
-set SITE  := V0 V1 V2 V3 V4 V5 V6 V7 V8 V9 V10 V11 V12 V13 V14 V15 V16 V17 V18 V19 V20 V21 V22 V23 V24 V25;
+set SITE  := V0 V1 V2 V3 V4 V5 V6 V7 V8 V9 V10 V11 V12 V13 V14 V15 V16 V17 V18 V19 V20 V21 V22 V23 V24 ;
 param radius := 6371;
 param coef_from := 1.825;
-param average_speed := 14;
+param average_speed := 17;
 param :     arrive_time xcord_i ycord_i:= 
 Installation_1 2.0   64.38   5.25
 Installation_2 2.0   64.12   5.23
@@ -54,5 +54,5 @@ V0 63.57966458270282 5.2395331598085795
  V22 64.47797986682234 6.526266883234629
  V23 64.65764292364624 5.668771287636452
  V24 64.65764292364624 6.0976904558351706
- V25 64.44 7.01;
-param vessels_number := 3;
+ ;
+param vessels_number := 2;

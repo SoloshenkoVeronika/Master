@@ -1,0 +1,31 @@
+set INSTALLATION := Installation_1 Installation_2 Installation_3 Installation_4 Installation_5 Installation_6 Installation_7 Installation_8 Installation_9 Installation_11 Installation_12 Installation_14 Installation_19 Installation_21 Installation_22 Installation_23 Installation_24 Installation_25 Installation_28 Installation_29 Installation_30 Installation_31 Installation_32 ;
+set SITE  := V0 V1 V2 V3 V4 V5 V6 V7 V8 V9 V10 V11 V12 V13 V14 V15 V16 V17 V18 V19 V20 V21 V22 V23 V24 ;
+param radius := 6371;
+param coef_from := 1.825;
+param average_speed := 17;
+param vessels_number := 2;
+param :     arrive_time xcord_i ycord_i   consequence	threat:=  
+Installation_1 3.0   64.38   5.25   120   0.001
+Installation_2 3.0   64.12   5.23   900   1e-05
+Installation_3 3.0   64.27   5.27   231   0.0019
+Installation_4 5.0   64.09   5.52   431   0.001
+Installation_5 3.0   64.51   5.08   341   1e-05
+Installation_6 3.0   64.57   5.19   900   0.001
+Installation_7 3.0   64.28   4.88   900   1e-05
+Installation_8 3.0   64.28   4.89   777   0.007
+Installation_9 3.0   64.21   4.81   777   0.007
+Installation_11 5.0   64.35   5.34   5   1e-05
+Installation_12 5.0   64.35   5.43   5   1e-05
+Installation_14 5.0   64.79   5.64   3   0.007
+Installation_19 5.0   63.55   5.1   5   0.007
+Installation_21 3.0   63.51   5.8   5   0.007
+Installation_22 3.0   63.63   5.73   5   0.007
+Installation_23 3.0   63.56   5.76   900   1e-05
+Installation_24 3.0   63.4   5.795   900   1e-05
+Installation_25 3.0   63.75   5.89   900   0.007
+Installation_28 3.0   63.67   6.69   143   0.007
+Installation_29 3.0   63.73   6.48   143   1e-05
+Installation_30 3.0   63.9   6.65   1200   0.001
+Installation_31 3.0   63.73   5.85   5   3.0
+Installation_32 5.0   64.44   7.01   3465   0.001
+;
