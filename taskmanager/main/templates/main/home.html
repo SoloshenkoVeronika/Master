@@ -1,0 +1,24 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="bg-image" style="
+background-image: url('https://mdbcdn.b-cdn.net/img/Photos/Others/images/77.jpg');
+height: 50vh; ">
+    </div>
+
+    <div class="jumbotron text-center">
+        <div class="container">
+            <h3 class="cover-heading">Decision Support Tool for Positioning Rescue Vessels</h3>
+            <br>
+            <p style="font-size: 1.4em">Using this application, you can determine the optimal positions of Rescue Vessels
+                for a set of offshore installations, as well as conduct a comparative
+                analysis of the current positings with the proposed solution</p>
+            {#            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more »</a></p>#}
+        </div>
+    </div>
+{% endblock %}

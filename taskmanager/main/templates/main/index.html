@@ -1,37 +1,83 @@
-{% extends 'main/base.html' %}
+<!DOCTYPE html>
+{% load static %}
+<html>
 
-{% block title %}
-    {{ title }}
-{% endblock %}
+<head>
 
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-{% block content %}
-    <div class="bg-image" style="
-background-image: url('https://mdbcdn.b-cdn.net/img/Photos/Others/images/77.jpg');
-height: 50vh; ">
-    </div>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Character Encoding -->
+    <meta charset="utf-8">
 
-    <div class="jumbotron text-center">
-        <div class="container">
-            <h3 class="cover-heading">Decision Support Tool for Positioning Rescue Vessels</h3>
-            <br>
-            <p style="font-size: 1.4em">Using this application, you can determine the optimal positions of Rescue Vessels
-                for a set of offshore installations, as well as conduct a comparative
-                analysis of the current positings with the proposed solution</p>
-            {#            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more »</a></p>#}
+    <!-- Layout control on mobile browsers -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <!-- Web manifest -->
+    <link rel="manifest" href="app.webmanifest">
+
+    <!-- Apple Web App (fullscreen) when adding to home screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <!-- Window icon file -->
+    <!-- Window icon file -->
+    <link rel="icon" type="image/x-icon"
+          href="{%static 'img/favicon.ico'%}">
+
+    <!-- Stylesheet libraries -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/fomantic-ui@2.8.3/dist/semantic.min.css"> <!-- Fomantic -->
+
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Merienda+One"> <!-- Google Fonts -->
+
+    <!-- JavaScript libraries -->
+    <script src="//cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script> <!-- jQuery -->
+    <script src="//cdn.jsdelivr.net/npm/fomantic-ui@2.8.3/dist/semantic.min.js"></script> <!-- Fomantic -->
+
+    <script src="//cdn.jsdelivr.net/npm/echarts@4.6.0/dist/echarts.min.js"></script> <!-- echarts -->
+    <script src="//www.gstatic.com/charts/loader.js"></script> <!-- Google Charts -->
+    <script src="https://unpkg.com/maptalks/dist/maptalks.min.js"></script> <!-- Maptalks -->
+    <script src="https://unpkg.com/maptalks.e3/dist/maptalks.e3.min.js"></script> <!-- Maptalks and Echart extention -->
+
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="charts.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+    <link rel="stylesheet"  href="{%static 'css/style.css'%}?version=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="ui borderless fluid huge menu">
+    <div class="ui container">
+        <a class="header item">Location of ERRV</a>
+        <a class="item" href="{% url 'index' %}">Home</a>
+        <div class="right menu">
+
+            <a class="active item" href="{% url 'login' %}">Login</a>
+
         </div>
     </div>
+</div>
+<div class="bg-image" style="
+background-image: url('https://mdbcdn.b-cdn.net/img/Photos/Others/images/77.jpg');
+height: 50vh; ">
+</div>
 
-{#    <section class="jumbotron text-center">#}
-{#        <div class="container">#}
-{#            <h1 class="jumbotron-heading"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Decision Support Tool for Positioning Rescue Vessels</font></font></h1>#}
-{#            <p style="vertical-align: inherit;font-size: 1.4em; vertical-align: inherit;">#}
-{#                Using this application, you can determine the optimal positions ofRescue Vessels#}
-{#                for a set of offshore platforms, as well as conduct a comparative#}
-{#                analysis of the current positings with the proposed solution#}
-{#            </p>#}
-{##}
-{#        </div>#}
-{#    </section>#}
+<div class="jumbotron text-center">
+    <div class="container">
+        <h3 class="cover-heading">Decision Support Tool for Positioning Rescue Vessels</h3>
+        <br>
+        <p style="font-size: 1.4em">Using this application, you can determine the optimal positions of Rescue Vessels
+            for a set of offshore installations, as well as conduct a comparative
+            analysis of the current positings with the proposed solution</p>
+        {#            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more »</a></p>#}
+    </div>
+</div>
+</body>
 
-{% endblock %}
+</html>

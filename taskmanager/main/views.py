@@ -56,9 +56,15 @@ import pyutilib.subprocess.GlobalData
 pyutilib.subprocess.GlobalData.DEFINE_SIGNAL_HANDLERS_DEFAULT = False
 
 def index(request):
-    installations = Installation.objects.order_by('id')
-    return render(request,'main/index.html',{'title':'Main page','installations': installations})
+    context={'title':'Main page'}
+    return render(request,'main/index.html',context)
 
+@login_required(login_url='login')
+def home(request):
+    context={'title':'Main page'}
+    return render(request,'main/home.html',context)
+
+@login_required(login_url='login')
 def about(request):
     installations = Installation.objects.order_by('id')
 
@@ -84,7 +90,7 @@ def about(request):
     print("I=",installations)
     return render(request,'main/about.html',context)
 
-
+@login_required(login_url='login')
 def installation(request):
     answer = ''
     error = ''
@@ -107,6 +113,7 @@ def installation(request):
     }
     return render(request,'main/installation.html',context)
 
+@login_required(login_url='login')
 def updateInstallation(request, pk):
     print("!!!!!!!!!!!!!!!!!!!!!!!!!111pk===",pk)
     installation = Installation.objects.get(id=pk)
@@ -117,11 +124,19 @@ def updateInstallation(request, pk):
         form = InstallationForm(request.POST, instance=installation)
         if form.is_valid():
             form.save()
-            return redirect('/')
+            installations = Installation.objects.order_by('id')
+            errvs= ERRV.objects.filter(type_solution__in=[201,210])
+            context = {
+                'installations': installations,
+                'errvs': errvs,
+                'title':'About'
+            }
+            return render(request, 'main/about.html',context)
 
     context = {'form':form}
     return render(request, 'main/installation.html', context)
 
+@login_required(login_url='login')
 def updateERRV (request, pk):
     errv = ERRV.objects.get(id=pk)
     form = ERRVForm(instance=errv)
@@ -135,6 +150,7 @@ def updateERRV (request, pk):
     context = {'form':form}
     return render(request, 'main/errv.html', context)
 
+@login_required(login_url='login')
 def errv(request):
     answer = ''
     error = ''
@@ -164,7 +180,7 @@ def errv(request):
     }
     return render(request,'main/errv.html',context)
 
-
+@login_required(login_url='login')
 def calc(request):
     if  request.method == 'POST':
         grid = request.POST.get("grid", "")
@@ -202,6 +218,7 @@ def calc(request):
         }
         return render(request,'main/calc.html')
 
+@login_required(login_url='login')
 def m_avtime(request):
     print("_________________Average_time____________________")
     error = ''
@@ -305,7 +322,7 @@ def m_avtime(request):
         }
         return render(request,'main/avtime.html',context)
 
-
+@login_required(login_url='login')
 def m_wstime(request):
     print("_________________Worst time____________________")
     error = ''
@@ -408,6 +425,7 @@ def m_wstime(request):
         }
         return render(request,'main/wstime.html',context)
 
+@login_required(login_url='login')
 def m_risk(request):
     print("______________m_risk_____))))))))))))))))))))))))))))))")
     if  request.method == 'POST':
@@ -444,6 +462,7 @@ def m_risk(request):
         }
         return render(request,'main/risk.html',context)
 
+@login_required(login_url='login')
 def m_risk3(request):
     print("______________m_risk3))))))))))))))))))))))))))))))")
     if  request.method == 'POST':
@@ -487,6 +506,7 @@ def m_risk3(request):
         }
         return render(request,'main/risk2.html',context)
 
+@login_required(login_url='login')
 def multi(request):
     print("_________________Multi____________________")
     error = ''
@@ -592,6 +612,7 @@ def multi(request):
         }
         return render(request,'main/multi.html',context)
 
+
 def registerPage(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -626,13 +647,16 @@ def loginPage(request):
             else:
                 messages.info(request, 'Username OR password is incorrect')
 
-        context = {}
+        context = {
+            'title':'title'
+        }
         return render(request, 'main/login.html', context)
 
 def logoutUser(request):
     logout(request)
     return redirect('login')
 
+@login_required(login_url='login')
 def map(request):
     context = {
         'title':'Map'

@@ -1,6 +1,6 @@
 <!doctype html>
 {% load static %}
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -47,13 +47,18 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
 </head>
 <body>
 
 <div class="ui borderless fluid huge menu">
     <div class="ui container">
         <a class="header item">Location of ERRV</a>
-        <a class="item" href="{% url 'index' %}">Home</a>
+        <a class="item" href="{% url 'home' %}">Home</a>
         <a class="item" href="{% url 'installation' %}">Installation</a>
         <a class="item" href="{% url 'errv' %}">ERRV</a>
         <a class="item" href="{% url 'about' %}">Map</a>
@@ -69,8 +74,8 @@
             </div>
         </div>
         <div class="right menu">
-
-            <a class="active item" href="{% url 'login' %}">User1</a>
+            <a class="item" href="{% url 'login' %}">{{request.user}}</a>
+            <a class="item"  href="{% url 'logout' %}">Logout</a>
 
         </div>
     </div>
