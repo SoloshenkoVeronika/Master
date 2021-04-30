@@ -205,14 +205,14 @@ def model1(grid,type_errv,ins_fix_list):
         f.write("set SITE  := ")
         count_p = 0
         for p in range(lent_pos_positions):
-            f.write(str("V"+str(p)))
+            f.write(str("ERRV_"+str(p)))
             f.write(str(" "))
             count_p = count_p + 1
         # ______________ -start- Only for installation as errv
         if (errv_inst_fix != 0):
             global number_fix_errv
             number_fix_errv = count_p
-            f.write(str("V"+str(count_p)))
+            f.write(str("ERRV_"+str(count_p)))
         # ______________ -end-
         f.write(";\n")
         f.write("param radius := 6371;\n")
@@ -234,12 +234,12 @@ def model1(grid,type_errv,ins_fix_list):
 
         i=0
         for p in pos_positions:
-            f.write(str("V"+str(i)+" "+(str(pos_positions.__getitem__(i))).replace('[','').replace(']','').replace(',','')+"\n"))
+            f.write(str("ERRV_"+str(i)+" "+(str(pos_positions.__getitem__(i))).replace('[','').replace(']','').replace(',','')+"\n"))
             fm.write(str(2)+",   "+str(pos_positions.__getitem__(i)).replace('[','').replace(']','')+"\n")
             i+=1
             f.write(str(" "))
         if (errv_inst_fix != 0):
-            f.write(str("V"+str(i)+" "+str(errv_inst_fix_lat)+" "+str(errv_inst_fix_lon)))
+            f.write(str("ERRV_"+str(i)+" "+str(errv_inst_fix_lat)+" "+str(errv_inst_fix_lon)))
 
         # for p in errv:
         #     f.write(str(p.get_title())+" "+str(p.get_lat())+"   "+str(p.get_lon())+"\n")
@@ -278,7 +278,7 @@ def model1(grid,type_errv,ins_fix_list):
     # ______________ -start- Only for installation as errv
     if (ins_fix_list != 0):
         def Balance_Fix(model):
-            return (model.y[str('V')+str(number_fix_errv)] == 1)
+            return (model.y[str('ERRV_')+str(number_fix_errv)] == 1)
         model.con2 = Constraint(rule=Balance_Fix)
     # ______________ -end-
     data = DataPortal()
@@ -381,7 +381,7 @@ def model1(grid,type_errv,ins_fix_list):
         f.write(";\n")
         f.write("set SITE  := ")
         for p in range(lent_pos_positions):
-            f.write(str("V"+str(p)))
+            f.write(str("ERRV_"+str(p)))
             f.write(str(" "))
 
         f.write(";\n")
@@ -403,7 +403,7 @@ def model1(grid,type_errv,ins_fix_list):
     with open(FileFullPath6, 'w') as f:
         i=0
         for p in pos_positions:
-            f.write(str("V"+str(i)+" "+(str(pos_positions.__getitem__(i))).replace('[','').replace(']','').replace(',','')+"\n"))
+            f.write(str("ERRV_"+str(i)+" "+(str(pos_positions.__getitem__(i))).replace('[','').replace(']','').replace(',','')+"\n"))
             i+=1
 
 
@@ -411,7 +411,7 @@ def model1(grid,type_errv,ins_fix_list):
     # with open(FileFullPath6, 'w') as f:
     #     for j in instance.SITE:
     #         if(instance.y[j].value==1):
-    #             f.write(str("V"+str(i)+" "+str(instance.ycord_s[j])+" "+str(instance.xcord_s[j])+"\n"))
+    #             f.write(str("ERRV_"+str(i)+" "+str(instance.ycord_s[j])+" "+str(instance.xcord_s[j])+"\n"))
     #             i+=1
 
 
@@ -468,7 +468,7 @@ def model2(ins_fix_list,flag_model4):
     # ______________ -start- Only for installation as errv
     if (ins_fix_list != 0):
         def Balance_Fix(model):
-            return (model.y[str('V')+str(number_fix_errv)] == 1)
+            return (model.y[str('ERRV_')+str(number_fix_errv)] == 1)
         model.con4 = Constraint(rule=Balance_Fix)
     # ______________ -end-
 
@@ -554,8 +554,8 @@ def model2(ins_fix_list,flag_model4):
                 # ______________ -start- Only for installation as errv
                 if flag_model4 != 1:
                     if (ins_fix_list != 0):
-                        if (j == (str('V')+str(number_fix_errv))):
-                            print("j=",j,"  model.y[str('V')+str(number_fix_errv)]=", str('V')+str(number_fix_errv))
+                        if (j == (str('ERRV_')+str(number_fix_errv))):
+                            print("j=",j,"  model.y[str('ERRV_')+str(number_fix_errv)]=", str('ERRV_')+str(number_fix_errv))
                             fm.write(str(100)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                         else:
                             fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
@@ -583,7 +583,7 @@ def model2(ins_fix_list,flag_model4):
     ERRV.objects.filter(type_solution=202).delete()
     for j in instance.SITE:
         if(instance.y[j].value==1):
-            errv = ERRV(title="O2_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=202)
+            errv = ERRV(title="TT_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=202)
             errv.save()
 
     print('Done2')
@@ -641,7 +641,7 @@ def model3(ins_fix_list,flag_model4):
     # ______________ -start- Only for installation as errv
     if (ins_fix_list != 0):
         def Balance_Fix(model):
-            return (model.y[str('V')+str(number_fix_errv)] == 1)
+            return (model.y[str('ERRV_')+str(number_fix_errv)] == 1)
         model.con5 = Constraint(rule=Balance_Fix)
     # ______________ -end-
 
@@ -741,8 +741,8 @@ def model3(ins_fix_list,flag_model4):
                 if flag_model4 != 1:
                     # ______________ -start- Only for installation as errv
                     if (ins_fix_list != 0):
-                        if (j == (str('V')+str(number_fix_errv))):
-                            print("j=",j,"  model.y[str('V')+str(number_fix_errv)]=", str('V')+str(number_fix_errv))
+                        if (j == (str('ERRV_')+str(number_fix_errv))):
+                            print("j=",j,"  model.y[str('ERRV_')+str(number_fix_errv)]=", str('ERRV_')+str(number_fix_errv))
                             fm.write(str(100)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                         else:
                             fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
@@ -761,7 +761,7 @@ def model3(ins_fix_list,flag_model4):
     ERRV.objects.filter(type_solution=203).delete()
     for j in instance.SITE:
         if(instance.y[j].value==1):
-            errv = ERRV(title="O3_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=203)
+            errv = ERRV(title="WT_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=203)
             errv.save()
 
 #____________start  .dat file for multi (model4)__________
@@ -862,7 +862,7 @@ def model4(ins_fix_list,wa,ww):
     # ______________ -start- Only for installation as errv
     if (ins_fix_list != 0):
         def Balance_Fix(model):
-            return (model.y[str('V')+str(number_fix_errv)] == 1)
+            return (model.y[str('ERRV_')+str(number_fix_errv)] == 1)
         model.con5 = Constraint(rule=Balance_Fix)
     # ______________ -end-
 
@@ -944,7 +944,7 @@ def model4(ins_fix_list,wa,ww):
         f.write("\n")
         for j in instance.SITE:
             if(instance.y[j].value==1):
-                f.write("O_" +str(j)+ " "+str(instance.xcord_s[j])+ " "+str(instance.ycord_s[j])+" 1 \n")
+                f.write("Multi_" +str(j)+ " "+str(instance.xcord_s[j])+ " "+str(instance.ycord_s[j])+" 1 \n")
 
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
     filename_resultserrv = "Model4terrv.sol"
@@ -963,8 +963,8 @@ def model4(ins_fix_list,wa,ww):
                 f.write(str(number_errv))
                 # ______________ -start- Only for installation as errv
                 if (ins_fix_list != 0):
-                    if (j == (str('V')+str(number_fix_errv))):
-                        print("j=",j,"  model.y[str('V')+str(number_fix_errv)]=", str('V')+str(number_fix_errv))
+                    if (j == (str('ERRV_')+str(number_fix_errv))):
+                        print("j=",j,"  model.y[str('ERRV_')+str(number_fix_errv)]=", str('ERRV_')+str(number_fix_errv))
                         fm.write(str(100)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                     else:
                         fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
@@ -983,7 +983,7 @@ def model4(ins_fix_list,wa,ww):
     ERRV.objects.filter(type_solution=204).delete()
     for j in instance.SITE:
         if(instance.y[j].value==1):
-            errv = ERRV(title="O3_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=204)
+            errv = ERRV(title="Multi_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=204)
             errv.save()
 
 
@@ -1179,10 +1179,10 @@ def model_risk(wr,wt):
             number_errv+=1
 
     filename_resultserrv = "Model1t.sol"
-    ERRV.objects.filter(type_solution=204).delete()
+    ERRV.objects.filter(type_solution=205).delete()
     for j in instance.SITE:
         if(instance.y[j].value==1):
-            errv = ERRV(title="O4_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.001,type_solution=204)
+            errv = ERRV(title="Risk_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.001,type_solution=205)
             errv.save()
     FileFullPathResults = os.path.join(full_path, filename_resultserrv)
     # with open(FileFullPathResults, 'r') as f:

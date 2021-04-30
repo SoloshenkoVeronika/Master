@@ -27,7 +27,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.forms import inlineformset_factory
 from django.contrib.auth.forms import UserCreationForm
-
+import pandas as pd
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
@@ -75,19 +75,87 @@ def about(request):
         for x in f:
             errvs = ERRV.objects.filter(id=int(x))
 
-    errvs= ERRV.objects.filter(type_solution__in=[201,210])
+    errvs= ERRV.objects.filter(type_solution__in=[201,210,202,203,204,205])
     #errvs = ERRV.objects.order_by('id')
     # print("Delete=",request.GET.get('DeleteButton'))
     if (request.GET.get('DeleteButtonI')):
         Installation.objects.filter(id = request.GET.get('DeleteButtonI')).delete()
     if (request.GET.get('DeleteButtonE')):
         ERRV.objects.filter(id = request.GET.get('DeleteButtonE')).delete()
+
+    m = folium.Map([62.354457, 2.377184], zoom_start=6)
+
+    lat_list_inst = []
+    lon_list_inst = []
+    elev_list_inst = []
+    for e in Installation.objects.all():
+        lat_list_inst.append(e.latitude)
+        lon_list_inst.append(e.longitude)
+        elev_list_inst.append(1)
+
+    lat_inst = pd.Series(lat_list_inst)
+    lon_inst = pd.Series(lon_list_inst)
+    elevation_inst = pd.Series(elev_list_inst)
+
+    #Function to change colors
+    def color_change(elev):
+        if(elev == 1 ):
+            return('#3f7fff')
+        elif(elev == 201):
+            return('#ffda25')
+        elif(elev == 202):
+            return('#ff7a2f')
+        elif(elev == 203):
+            return('#55cb68')
+        elif(elev == 204):
+            return('#f8b5f5')
+        elif(elev == 205):
+            return('#bf6bc7')
+        elif(elev == 210):
+            return('#fcffd0')
+
+
+    lat_list_errv = []
+    lon_list_errv = []
+    elev_list_errv = []
+    for e in ERRV.objects.all():
+        lat_list_errv.append(e.latitude)
+        lon_list_errv.append(e.longitude)
+        if(e.type_solution == 201.0):
+            elev_list_errv.append(201)
+        elif (e.type_solution == 210.0):
+            elev_list_errv.append(210)
+        elif (e.type_solution == 202.0):
+            elev_list_errv.append(202)
+        elif (e.type_solution == 203.0):
+            elev_list_errv.append(203)
+        elif (e.type_solution == 204.0):
+            elev_list_errv.append(204)
+        elif (e.type_solution == 205.0):
+            elev_list_errv.append(205)
+
+    lat_errv = pd.Series(lat_list_errv)
+    lon_errv = pd.Series(lon_list_errv)
+    elevation_errv = pd.Series(elev_list_errv)
+    print("lat_errv=",lat_errv)
+    print("lon_errv=",lon_errv)
+    print("elevation_errv=",elevation_errv)
+
+
+    #Plot Markers
+    for lat, lon, elevation in zip(lat_inst, lon_inst, elevation_inst):
+        folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(lat)+" m", fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 1).add_to(m)
+
+    for lat, lon, elevation in zip(lat_errv, lon_errv, elevation_errv):
+        folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(elevation)+" m", fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 1).add_to(m)
+
+    m=m._repr_html_() #updated
     context = {
         'installations': installations,
         'errvs': errvs,
-        'title':'Map'
+        'title':'Map',
+        'my_map': m,
     }
-    print("I=",installations)
     return render(request,'main/about.html',context)
 
 @login_required(login_url='login')
@@ -125,7 +193,7 @@ def updateInstallation(request, pk):
         if form.is_valid():
             form.save()
             installations = Installation.objects.order_by('id')
-            errvs= ERRV.objects.filter(type_solution__in=[201,210])
+            errvs= ERRV.objects.filter(type_solution__in=[201,210,202,203,204,205])
             context = {
                 'installations': installations,
                 'errvs': errvs,
@@ -145,7 +213,14 @@ def updateERRV (request, pk):
         form = ERRVForm(request.POST, instance=errv)
         if form.is_valid():
             form.save()
-            return redirect('/')
+            installations = Installation.objects.order_by('id')
+            errvs= ERRV.objects.filter(type_solution__in=[201,210,202,203,204,205])
+            context = {
+                'installations': installations,
+                'errvs': errvs,
+                'title':'About'
+            }
+            return render(request, 'main/about.html',context)
 
     context = {'form':form}
     return render(request, 'main/errv.html', context)
@@ -658,57 +733,140 @@ def logoutUser(request):
 
 @login_required(login_url='login')
 def map(request):
-    context = {
-        'title':'Map'
-    }
+
     #creation of map comes here + business logic
     m = folium.Map([62.354457, 2.377184], zoom_start=6)
 
+    lat_list_inst = []
+    lon_list_inst = []
+    elev_list_inst = []
+    for e in Installation.objects.all():
+        lat_list_inst.append(e.latitude)
+        lon_list_inst.append(e.longitude)
+        elev_list_inst.append(1)
 
-    #Load Data
-    data = pd.read_csv('main\\recources\\Data_Map.txt')
-    lat = data['LAT']
-    lon = data['LON']
-    elevation = data['ELEV']
+    lat_inst = pd.Series(lat_list_inst)
+    lon_inst = pd.Series(lon_list_inst)
+    elevation_inst = pd.Series(elev_list_inst)
 
     #Function to change colors
     def color_change(elev):
         if(elev == 1 ):
-            return('green')
-        elif(elev == 2):
-            return('yellow')
-        elif(elev == 3):
-            return('green')
+            return('#3f7fff')
+        elif(elev == 201):
+            return('#ffda25')
+        elif(elev == 202):
+            return('#ff7a2f')
+        elif(elev == 203):
+            return('#55cb68')
+        elif(elev == 204):
+            return('#f8b5f5')
+        elif(elev == 205):
+            return('#bf6bc7')
+        elif(elev == 210):
+            return('#fcffd0')
 
-    #Function to change colors
-    def radius_change(elev):
-        if(elev == 3 ):
-            return 62050
-        elif(elev == 5):
-            return 124100
-        elif(elev == 6):
-            return 155125
 
+    lat_list_errv = []
+    lon_list_errv = []
+    elev_list_errv = []
+    for e in ERRV.objects.all():
+        lat_list_errv.append(e.latitude)
+        lon_list_errv.append(e.longitude)
+        if(e.type_solution == 201.0):
+            elev_list_errv.append(201)
+        elif (e.type_solution == 210.0):
+            elev_list_errv.append(210)
+        elif (e.type_solution == 202.0):
+            elev_list_errv.append(202)
+        elif (e.type_solution == 203.0):
+            elev_list_errv.append(203)
+        elif (e.type_solution == 204.0):
+            elev_list_errv.append(204)
+        elif (e.type_solution == 205.0):
+            elev_list_errv.append(205)
 
-    data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
-    lat2 = data2['LAT']
-    lon2 = data2['LON']
-    elevation2 = data2['ELEV']
+    lat_errv = pd.Series(lat_list_errv)
+    lon_errv = pd.Series(lon_list_errv)
+    elevation_errv = pd.Series(elev_list_errv)
+    print("lat_errv=",lat_errv)
+    print("lon_errv=",lon_errv)
+    print("elevation_errv=",elevation_errv)
 
-    for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
-        folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='green',  fill_opacity = 0.2).add_to(m)
 
     #Plot Markers
-    for lat, lon, elevation in zip(lat, lon, elevation):
-        folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(lat)+" m", fill_color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+    for lat, lon, elevation in zip(lat_inst, lon_inst, elevation_inst):
+        folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(lat)+" m", fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 1).add_to(m)
 
-    #Plot Markers
-    # for lat, lon, elevation in zip(lat, lon, elevation):
-    #     folium.Circle(location=[lat, lon], radius = radius_change(elevation), popup=str(elevation)+" m", fill_color=color_change(elevation),  fill_opacity = 0.2).add_to(m)
+    for lat, lon, elevation in zip(lat_errv, lon_errv, elevation_errv):
+        folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(elevation)+" m", fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 1).add_to(m)
 
     m=m._repr_html_() #updated
     context = {'my_map': m}
 
-
-    #return render(request, 'polls/show_folium_map.html', context)
     return render(request,'main/map.html',context)
+
+    # context = {
+    #     'title':'Map'
+    # }
+    # #creation of map comes here + business logic
+    # m = folium.Map([62.354457, 2.377184], zoom_start=6)
+    #
+    #
+    # #Load Data
+    # data = pd.read_csv('main\\recources\\Data_Map.txt')
+    # # lat = data['LAT']
+    # #lon = data['LON']
+    # elevation = data['ELEV']
+    #
+    # lat_list = []
+    # lon_list = []
+    # for e in Installation.objects.all():
+    #     lat_list.append(e.latitude)
+    #     lon_list.append(e.longitude)
+    #
+    #
+    # lat = pd.Series(lat_list)
+    # lon = pd.Series(lon_list)
+    #
+    # #Function to change colors
+    # def color_change(elev):
+    #     if(elev == 1 ):
+    #         return('green')
+    #     elif(elev == 2):
+    #         return('yellow')
+    #     elif(elev == 3):
+    #         return('green')
+    #
+    # #Function to change colors
+    # def radius_change(elev):
+    #     if(elev == 3 ):
+    #         return 62050
+    #     elif(elev == 5):
+    #         return 124100
+    #     elif(elev == 6):
+    #         return 155125
+    #
+    #
+    # data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
+    # lat2 = data2['LAT']
+    # lon2 = data2['LON']
+    # elevation2 = data2['ELEV']
+    #
+    # for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
+    #     folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='green',  fill_opacity = 0.2).add_to(m)
+    #
+    # #Plot Markers
+    # for lat, lon, elevation in zip(lat, lon, elevation):
+    #     folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(lat)+" m", fill_color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+    #
+    # #Plot Markers
+    # # for lat, lon, elevation in zip(lat, lon, elevation):
+    # #     folium.Circle(location=[lat, lon], radius = radius_change(elevation), popup=str(elevation)+" m", fill_color=color_change(elevation),  fill_opacity = 0.2).add_to(m)
+    #
+    # m=m._repr_html_() #updated
+    # context = {'my_map': m}
+    #
+    #
+    # #return render(request, 'polls/show_folium_map.html', context)
+    # return render(request,'main/map.html',context)
