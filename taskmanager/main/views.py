@@ -51,7 +51,7 @@ from django.http import HttpResponse
 # Create your views here.
 
 import shutil
-
+import time
 import pyutilib.subprocess.GlobalData
 pyutilib.subprocess.GlobalData.DEFINE_SIGNAL_HANDLERS_DEFAULT = False
 
@@ -88,14 +88,17 @@ def about(request):
     lat_list_inst = []
     lon_list_inst = []
     elev_list_inst = []
+    name_list_inst = []
     for e in Installation.objects.all():
         lat_list_inst.append(e.latitude)
         lon_list_inst.append(e.longitude)
         elev_list_inst.append(1)
+        name_list_inst.append(e.title)
 
     lat_inst = pd.Series(lat_list_inst)
     lon_inst = pd.Series(lon_list_inst)
     elevation_inst = pd.Series(elev_list_inst)
+    name_inst = pd.Series(name_list_inst)
 
     #Function to change colors
     def color_change(elev):
@@ -118,36 +121,36 @@ def about(request):
     lat_list_errv = []
     lon_list_errv = []
     elev_list_errv = []
+    name_list_errv = []
     for e in ERRV.objects.all():
-        lat_list_errv.append(e.latitude)
-        lon_list_errv.append(e.longitude)
         if(e.type_solution == 201.0):
-            elev_list_errv.append(201)
-        elif (e.type_solution == 210.0):
-            elev_list_errv.append(210)
-        elif (e.type_solution == 202.0):
-            elev_list_errv.append(202)
-        elif (e.type_solution == 203.0):
-            elev_list_errv.append(203)
-        elif (e.type_solution == 204.0):
-            elev_list_errv.append(204)
-        elif (e.type_solution == 205.0):
-            elev_list_errv.append(205)
+            lat_list_errv.append(e.latitude)
+            lon_list_errv.append(e.longitude)
+            name_list_errv.append(e.title)
+            if(e.type_solution == 201.0):
+                elev_list_errv.append(201)
+            elif (e.type_solution == 210.0):
+                elev_list_errv.append(210)
+            elif (e.type_solution == 202.0):
+                elev_list_errv.append(202)
+            elif (e.type_solution == 203.0):
+                elev_list_errv.append(203)
+            elif (e.type_solution == 204.0):
+                elev_list_errv.append(204)
+            elif (e.type_solution == 205.0):
+                elev_list_errv.append(205)
 
     lat_errv = pd.Series(lat_list_errv)
     lon_errv = pd.Series(lon_list_errv)
     elevation_errv = pd.Series(elev_list_errv)
-    print("lat_errv=",lat_errv)
-    print("lon_errv=",lon_errv)
-    print("elevation_errv=",elevation_errv)
-
+    name_errv = pd.Series(name_list_errv)
 
     #Plot Markers
-    for lat, lon, elevation in zip(lat_inst, lon_inst, elevation_inst):
-        folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(lat)+" m", fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 1).add_to(m)
+    for lat, lon, elevation, name_inst in zip(lat_inst, lon_inst, elevation_inst,name_inst):
+        folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(name_inst), fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 1).add_to(m)
 
-    for lat, lon, elevation in zip(lat_errv, lon_errv, elevation_errv):
-        folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(elevation)+" m", fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 1).add_to(m)
+    for lat, lon, elevation,name_errv in zip(lat_errv, lon_errv, elevation_errv,name_errv):
+        folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(name_errv), fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 1).add_to(m)
 
     m=m._repr_html_() #updated
     context = {
@@ -324,8 +327,10 @@ def m_avtime(request):
                 'title': "Minimizing average time"
             }
         else:
+            start_time = time.time()
             model1(grid,type_errv,ins_fix_list)
             model2(ins_fix_list,flag_model4)
+            print("--- %s seconds ---" % (time.time() - start_time))
             # errvs= ERRV.objects.filter(type_solution=202)
             # installations = Installation.objects.order_by('id')
 
@@ -337,6 +342,7 @@ def m_avtime(request):
             lat = data['LAT']
             lon = data['LON']
             elevation = data['ELEV']
+            name = data['NAME']
 
             #Function to change colors
             def color_change(elev):
@@ -373,11 +379,11 @@ def m_avtime(request):
             elevation2 = data2['ELEV']
 
             for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
-                folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='red',  fill_opacity = 0.05).add_to(m)
+                folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), fill_color='red',  fill_opacity = 0.05).add_to(m)
 
             #Plot Markers
-            for lat, lon, elevation in zip(lat, lon, elevation):
-                folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(lat)+" m", fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+            for lat, lon, elevation,name in zip(lat, lon, elevation,name):
+                folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(name), fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
 
             m=m._repr_html_() #updated
 
@@ -439,6 +445,7 @@ def m_wstime(request):
             lat = data['LAT']
             lon = data['LON']
             elevation = data['ELEV']
+            name = data['NAME']
 
             #Function to change colors
             def color_change(elev):
@@ -478,8 +485,8 @@ def m_wstime(request):
                 folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='red',  fill_opacity = 0.05).add_to(m)
 
             #Plot Markers
-            for lat, lon, elevation in zip(lat, lon, elevation):
-                folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(lat)+" m", fill_color=color_change(elevation),color=color_change(elevation), fill_opacity = 0.9).add_to(m)
+            for lat, lon, elevation,name in zip(lat, lon, elevation,name):
+                folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(name), fill_color=color_change(elevation),color=color_change(elevation), fill_opacity = 0.9).add_to(m)
 
             m=m._repr_html_() #updated
 
@@ -627,6 +634,7 @@ def multi(request):
             lat = data['LAT']
             lon = data['LON']
             elevation = data['ELEV']
+            name = data['NAME']
 
             #Function to change colors
             def color_change(elev):
@@ -666,8 +674,8 @@ def multi(request):
                 folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='red',  fill_opacity = 0.05).add_to(m)
 
             #Plot Markers
-            for lat, lon, elevation in zip(lat, lon, elevation):
-                folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(lat)+" m", fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+            for lat, lon, elevation,name in zip(lat, lon, elevation,name):
+                folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(name), fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
 
             m=m._repr_html_() #updated
 

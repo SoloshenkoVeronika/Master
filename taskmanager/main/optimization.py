@@ -19,7 +19,7 @@ import pyproj
 from pyproj import Proj, transform
 import sys
 from shapely.geometry import Point, Polygon
-
+import time
 number_fix_errv = 0
 
 def get_pot_position(grid):
@@ -219,16 +219,18 @@ def model1(grid,type_errv,ins_fix_list):
         f.write("param coef_from := 1.825;\n")
         f.write("param average_speed := 17;\n")
         f.write("param :     arrive_time xcord_i ycord_i:= \n")
-        fm.write("ELEV,LAT,LON\n")
+        fm.write("ELEV,LAT,LON,NAME\n")
         for p in inst:
             time = p.get_r_time()
             time=time - 1
-            # if (time==3):
-            #     time = 5
-            # else:
-            #     time = p.get_r_time()
+            #____________________________ Time 5
+            if (time==3):
+                time = 5
+            else:
+                time = p.get_r_time()
+            #____________________________ Time 5
             f.write(str(p.get_title())+" "+str(time)+"   "+str(p.get_lat())+"   "+str(p.get_lon())+"\n")
-            fm.write(str(1)+",   "+str(p.get_lat())+",   "+str(p.get_lon())+"\n")
+            fm.write(str(1)+",   "+str(p.get_lat())+",   "+str(p.get_lon())+",   "+str(p.get_title())+"\n")
         f.write(";\n")
         f.write("param : 	xcord_s ycord_s:= \n")
 
@@ -700,9 +702,13 @@ def model3(ins_fix_list,flag_model4):
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
     filename_results = "Model3t.sol"
     FileFullPathResults = os.path.join(full_path, filename_results)
-
+    sum_time = 0.0
     with open(FileFullPathResults, 'w') as f:
         f.write("Total cost="+str(value(instance.obj))+"\n")
+        for i in instance.INSTALLATION:
+            for j in instance.SITE:
+               sum_time += instance.distance_time[i,j]*instance.x[i,j].value
+        f.write("Total time="+str(sum_time)+ " "+"\n")
         f.write("Coverage parameter="+"\n")
         for i in instance.INSTALLATION:
             for j in instance.SITE:
@@ -892,40 +898,16 @@ def model4(ins_fix_list,wa,ww):
     opt = SolverFactory('cbc',executable=solverpath_exe)
     results = opt.solve(instance)
     instance.solutions.store_to(results)
-    #results.write()
-    #instance.display()
-
-    # if (results.solver.status == SolverStatus.ok) and (results.solver.termination_condition == TerminationCondition.optimal):
-    #     print('___aa___')
-    #     for i in instance.INSTALLATION:
-    #         for j in instance.SITE:
-    #             print(instance.aa[i,j] ,end =" ")
-    #         print("")
-    #     print('___x___')
-    #     for i in instance.INSTALLATION:
-    #         for j in instance.SITE:
-    #             print(instance.x[i,j].value ,end =" ")
-    #         print("")
-    #     print('___y___')
-    #     for j in instance.SITE:
-    #         print('y[',j,']=' , instance.y[j].value)
-    #     print('___Total cost___')
-    #     print(value(instance.obj))
-    #     #print('Do something when the solution in optimal and feasible')
-    #
-    #
-    # elif (results.solver.termination_condition == TerminationCondition.infeasible):
-    #     print('Model is infeasible')
-    # else:
-    #     # Something else is wrong
-    #     print('Solver Status: ',  result.solver.status)
-
 
     filename_results = "Model4t.sol"
     FileFullPathResults = os.path.join(full_path, filename_results)
-
+    sum_time = 0.0
     with open(FileFullPathResults, 'w') as f:
         f.write("Total cost="+str(value(instance.obj))+"\n")
+        for i in instance.INSTALLATION:
+            for j in instance.SITE:
+                sum_time += instance.distance_time[i,j]*instance.x[i,j].value
+        f.write("Total time="+str(sum_time)+ " "+"\n")
         f.write("Coverage parameter="+"\n")
         for i in instance.INSTALLATION:
             for j in instance.SITE:
