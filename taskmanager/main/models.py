@@ -78,4 +78,14 @@ class ERRV (models.Model):
     def __str__(self):
         return self.title
 
+class Waves (models.Model):
+    locs = models.IntegerField('locs')
+    time = models.DateTimeField('Time')
+    station_x_coordinate = models.FloatField('Latitude')
+    #  longitude
+    station_y_coordinate = models.FloatField('Longitude')
+    #
+    swh = models.FloatField('swh')
+
+
 

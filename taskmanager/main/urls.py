@@ -11,7 +11,7 @@ urlpatterns = [
     path('register', views.registerPage, name="register"),
     path('logout', views.logoutUser, name="logout"),
     path('risk', views.m_risk, name='risk'),
-    path('risk2', views.m_risk3, name='risk2'),
+    path('multi2', views.multi2, name='multi2'),
     path('avtime', views.m_avtime, name="avtime"),
     path('wstime', views.m_wstime, name="wstime"),
     path('index',views.index,name='index'),
@@ -20,5 +20,6 @@ urlpatterns = [
     path('update_installation/<str:pk>/', views.updateInstallation, name="update_installation"),
     path('update_errv/<str:pk>/', views.updateERRV, name="update_errv"),
     path('multi', views.multi, name='multi'),
+    path('risk2', views.risk2, name='risk2'),
 
 ]

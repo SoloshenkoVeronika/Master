@@ -1,10 +1,10 @@
 from msilib import Binary
-
+import tablib
 from django.shortcuts import render,redirect
 from django.urls import reverse
 
-from .forms import InstallationForm,ERRVForm
-
+from .forms import InstallationForm,ERRVForm,ExampleForm
+from .models import Installation,ERRV,Waves
 from django.shortcuts import get_object_or_404, render
 import shutil
 import sys
@@ -48,12 +48,20 @@ import json
 from django import forms
 from itertools import combinations
 from django.http import HttpResponse
+import pandas as pd
+import datetime as dt
+from shapely.geometry import Polygon
+from scipy.stats import weibull_min
 # Create your views here.
-
+import csv
+import os
 import shutil
 import time
 import pyutilib.subprocess.GlobalData
 pyutilib.subprocess.GlobalData.DEFINE_SIGNAL_HANDLERS_DEFAULT = False
+
+number_ERRV = 0
+ins_fix_list_g = []
 
 def index(request):
     context={'title':'Main page'}
@@ -509,81 +517,211 @@ def m_wstime(request):
 
 @login_required(login_url='login')
 def m_risk(request):
-    print("______________m_risk_____))))))))))))))))))))))))))))))")
+    print("______________Risk_1_______________")
+
+    #     grid = request.POST.get("grid", "")
+    #     count_errv = model1(grid)
+    #     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
+    #     filename = "Modelpotpos.dat"
+    #     FileFullPath = os.path.join(full_path, filename)
+    #
+    #     with open(FileFullPath) as f:
+    #         m= [line.split() for line in f]
+    #     print(m)
+    #     print("type=",type(m))
+    #     list = []
+    #     errvs = ERRV()
+    #     for i in range(int(count_errv)):
+    #         errvs = ERRV(title="O4_" +str(m[i][0]), latitude=m[i][1],longitude=m[i][2],prob=0.001,type_solution=1001)
+    #         list.append(i)
+    #     print("m=",errvs)
+    #
+    #
+    #     context = {
+    #         'nv':list,
+    #         'el':errvs.get_lat(),
+    #         'title': "Risk22"
+    #     }
+    #     #return render(request,'main/risk2.html',context)
+    #     return HttpResponseRedirect('risk2',context)
+    #
+    #     #return redirect ('risk2',context)
+    # else:
+    #     context = {
+    #         'title': "Risk1"
+    #     }
+    #     return render(request,'main/risk.html',context)
+
+    error = ''
+    installations = Installation.objects.order_by('id')
+    flag_model4 = 1
     if  request.method == 'POST':
+        print("JJLJKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")
+        flag_grid=0
+        type_errv = 0
+        ins_fix_list = 0
         grid = request.POST.get("grid", "")
-        count_errv = model1(grid)
-        full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
-        filename = "Modelpotpos.dat"
-        FileFullPath = os.path.join(full_path, filename)
+        print("grid=",grid)
+        display_type = request.POST.get("display_type", None)
+        ins_fix_flag = request.POST.get("ins_fix", None)
 
-        with open(FileFullPath) as f:
-            m= [line.split() for line in f]
-        print(m)
-        print("type=",type(m))
-        list = []
-        errvs = ERRV()
-        for i in range(int(count_errv)):
-            errvs = ERRV(title="O4_" +str(m[i][0]), latitude=m[i][1],longitude=m[i][2],prob=0.001,type_solution=1001)
-            list.append(i)
-        print("m=",errvs)
+        if ins_fix_flag in ["F"]:
+            ins_fix_list = request.POST.get("inst_list", "")
+            global ins_fix_list_g
+            ins_fix_list_g = ins_fix_list
+        if display_type in ["DB"]:
+            type_errv = 1
+        elif display_type == "GR":
+            type_errv = 2
+            if grid == '':
+                flag_grid = 1
 
+        if (type_errv == 2 and flag_grid == 1):
+            error = 'Number is not valide'
+            context = {
+                'installations': installations,
+                'error':error,
+                'title': "Minimizing average time"
+            }
+        else:
+            global number_ERRV
+            number_ERRV = model1(grid,type_errv,ins_fix_list)
+            context = {
+                'installations': installations,
+                'error':error,
+                'title': "Risk model"
+            }
 
-        context = {
-            'nv':list,
-            'el':errvs.get_lat(),
-            'title': "Risk22"
-        }
-        #return render(request,'main/risk2.html',context)
         return HttpResponseRedirect('risk2',context)
-
-        #return redirect ('risk2',context)
     else:
+
         context = {
-            'title': "Risk1"
-        }
+                'installations': installations,
+                'title': "Risk model"
+            }
         return render(request,'main/risk.html',context)
 
 @login_required(login_url='login')
-def m_risk3(request):
-    print("______________m_risk3))))))))))))))))))))))))))))))")
+def risk2(request):
+    print("______________Risk2_____________________________________")
+    installations = Installation.objects.order_by('id')
+    flag_model4 = 0
+    error = ''
+    list_numner_vessels = []
+    print("!!!number_ERRV=",number_ERRV)
+    for i in range(number_ERRV):
+        list_numner_vessels.append(number_ERRV)
+
+    print("list_numner_vessels=",list_numner_vessels)
+
     if  request.method == 'POST':
-        wr = request.POST.get("wr", "")
-        wt = request.POST.get("wt", "")
-        er = request.POST.get("er", "")
-        risk1 = 0.1
-        risk21 = 0.1
-        risk22 = 0.3
-        risk31 = 0.1
-        risk32 = 0.2
-        risk33 = 0.3
-        risk4 = 0.5
+        pp = request.POST.get("pp", "")
 
-        risk_list = []
-        risk2 = 1 - (1-float(risk21))*(1-float(risk22))
-        risk3 = 1 - (1-float(risk31))*(1-float(risk32))*(1-float(risk33))
-        risk_sum = 1-(1-float(risk1))*(1-float(risk2))*(1-float(risk3))*(1-float(risk4))
-        risk_list.append(risk_sum)
-        risk_list.append(4)
-        full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
-        filename = "Probability0.txt"
-        FileFullPath = os.path.join(full_path, filename)
-        with open(FileFullPath, 'w') as f:
-            for i in risk_list:
-                f.write(str(i)+"\n")
-
-        print("risk_list=",risk_list)
-
-        model_risk(wr,wt)
-        #model_risk(wr,wt)
-        print("er=",er)
+        age = request.POST.getlist("age")
+        # risk1 = 0.1
+        # risk21 = 0.1
+        # risk22 = 0.3
+        # risk31 = 0.1
+        # risk32 = 0.2
+        # risk33 = 0.3
+        # risk4 = 0.5
+        #
+        # risk_list = []
+        # risk2 = 1 - (1-float(risk21))*(1-float(risk22))
+        # risk3 = 1 - (1-float(risk31))*(1-float(risk32))*(1-float(risk33))
+        # risk_sum = 1-(1-float(risk1))*(1-float(risk2))*(1-float(risk3))*(1-float(risk4))
+        # risk_list.append(risk_sum)
+        # risk_list.append(4)
+        # full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
+        # filename = "Probability0.txt"
+        # FileFullPath = os.path.join(full_path, filename)
+        # with open(FileFullPath, 'w') as f:
+        #     for i in risk_list:
+        #         f.write(str(i)+"\n")
+        #
+        # print("risk_list=",risk_list)
+        #
+        # model_risk(wr,wt)
+        # #model_risk(wr,wt)
+        print("pp=",pp," ",age," ")
         context = {
             #'installations':installations,
             'title': "About"
         }
+
+        test_list = [int(i) for i in age]
+        errv_ages = tuple(test_list)
+
+
+        crush_prob_res = crush_prob(pp,errv_ages)
+        model4(ins_fix_list_g,flag_model4)
+        #
+        # #creation of map comes here + business logic
+        # m = folium.Map([62.354457, 2.377184], zoom_start=6)
+        #
+        # #Load Data
+        # data = pd.read_csv('main\\recources\\Data_Map.txt')
+        # lat = data['LAT']
+        # lon = data['LON']
+        # elevation = data['ELEV']
+        # name = data['NAME']
+        #
+        # #Function to change colors
+        # def color_change(elev):
+        #     if(elev == 1 ):
+        #         return('blue')
+        #     elif(elev == 2):
+        #         return('yellow')
+        #     elif(elev == 3):
+        #         return('red')
+        #     elif(elev == 100):
+        #         return('purple')
+        #
+        # #Function to change colors
+        # def radius_change(elev):
+        #     if(elev == 3 ):
+        #         return 62050
+        #     elif(elev == 5):
+        #         return 124100
+        #     elif(elev == 6):
+        #         return 155125
+        #
+        #         #Function to change colors
+        # def radius_size(elev):
+        #     if(elev == 1 ):
+        #         return 2
+        #     elif(elev == 2):
+        #         return 1
+        #     elif(elev == 3 or elev == 100):
+        #         return 3
+        #
+        # data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
+        # lat2 = data2['LAT']
+        # lon2 = data2['LON']
+        # elevation2 = data2['ELEV']
+        #
+        # for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
+        #     folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='red',  fill_opacity = 0.05).add_to(m)
+        #
+        # #Plot Markers
+        # for lat, lon, elevation,name in zip(lat, lon, elevation,name):
+        #     folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(name), fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+        #
+        # m=m._repr_html_() #updated
+
+
+        context = {
+            'installations': installations,
+            'error':error,
+            # 'my_map': m,
+            # 'errvs': errvs,
+            'title': "Multi-objective model"
+        }
+
         return render(request,'main/risk2.html',context)
     else:
         context = {
+            'numner_vessels':list_numner_vessels,
             'title': "Risk2"
         }
         return render(request,'main/risk2.html',context)
@@ -601,12 +739,11 @@ def multi(request):
         grid = request.POST.get("grid", "")
         display_type = request.POST.get("display_type", None)
         ins_fix_flag = request.POST.get("ins_fix", None)
-        wa = request.POST.get("wa", "")
-        ww = request.POST.get("ww", "")
-
 
         if ins_fix_flag in ["F"]:
             ins_fix_list = request.POST.get("inst_list", "")
+            global ins_fix_list_g
+            ins_fix_list_g = ins_fix_list
         if display_type in ["DB"]:
             type_errv = 1
         elif display_type == "GR":
@@ -622,72 +759,17 @@ def multi(request):
                 'title': "Minimizing average time"
             }
         else:
-            model1(grid,type_errv,ins_fix_list)
-            model2(ins_fix_list,flag_model4)
-            model3(ins_fix_list,flag_model4)
-            model4(ins_fix_list,wa,ww)
-            #creation of map comes here + business logic
-            m = folium.Map([62.354457, 2.377184], zoom_start=6)
-
-            #Load Data
-            data = pd.read_csv('main\\recources\\Data_Map.txt')
-            lat = data['LAT']
-            lon = data['LON']
-            elevation = data['ELEV']
-            name = data['NAME']
-
-            #Function to change colors
-            def color_change(elev):
-                if(elev == 1 ):
-                    return('blue')
-                elif(elev == 2):
-                    return('yellow')
-                elif(elev == 3):
-                    return('red')
-                elif(elev == 100):
-                    return('purple')
-
-            #Function to change colors
-            def radius_change(elev):
-                if(elev == 3 ):
-                    return 62050
-                elif(elev == 5):
-                    return 124100
-                elif(elev == 6):
-                    return 155125
-
-                    #Function to change colors
-            def radius_size(elev):
-                if(elev == 1 ):
-                    return 2
-                elif(elev == 2):
-                    return 1
-                elif(elev == 3 or elev == 100):
-                    return 3
-
-            data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
-            lat2 = data2['LAT']
-            lon2 = data2['LON']
-            elevation2 = data2['ELEV']
-
-            for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
-                folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='red',  fill_opacity = 0.05).add_to(m)
-
-            #Plot Markers
-            for lat, lon, elevation,name in zip(lat, lon, elevation,name):
-                folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(name), fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
-
-            m=m._repr_html_() #updated
+            global number_ERRV
+            number_ERRV = model1(grid,type_errv,ins_fix_list)
 
 
             context = {
                 'installations': installations,
                 'error':error,
-                'my_map': m,
-                # 'errvs': errvs,
-                'title': "Multi-objective model"
+                'title': "Multi-objective model222"
             }
-        return render(request,'main/multi.html',context)
+            return HttpResponseRedirect('multi2',context)
+
     else:
         context = {
             'installations': installations,
@@ -695,6 +777,134 @@ def multi(request):
         }
         return render(request,'main/multi.html',context)
 
+@login_required(login_url='login')
+def multi2(request):
+    print("______________Multi2_____________________________________")
+    installations = Installation.objects.order_by('id')
+    flag_model4 = 1
+    error = ''
+    list_numner_vessels = []
+    print("!!!number_ERRV=",number_ERRV)
+    for i in range(number_ERRV):
+        list_numner_vessels.append(number_ERRV)
+
+    print("list_numner_vessels=",list_numner_vessels)
+
+    if  request.method == 'POST':
+        pp = request.POST.get("pp", "")
+        wa = request.POST.get("wa", "")
+        ww = request.POST.get("ww", "")
+        wr = request.POST.get("wr", "")
+        age = request.POST.getlist("age")
+        # risk1 = 0.1
+        # risk21 = 0.1
+        # risk22 = 0.3
+        # risk31 = 0.1
+        # risk32 = 0.2
+        # risk33 = 0.3
+        # risk4 = 0.5
+        #
+        # risk_list = []
+        # risk2 = 1 - (1-float(risk21))*(1-float(risk22))
+        # risk3 = 1 - (1-float(risk31))*(1-float(risk32))*(1-float(risk33))
+        # risk_sum = 1-(1-float(risk1))*(1-float(risk2))*(1-float(risk3))*(1-float(risk4))
+        # risk_list.append(risk_sum)
+        # risk_list.append(4)
+        # full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
+        # filename = "Probability0.txt"
+        # FileFullPath = os.path.join(full_path, filename)
+        # with open(FileFullPath, 'w') as f:
+        #     for i in risk_list:
+        #         f.write(str(i)+"\n")
+        #
+        # print("risk_list=",risk_list)
+        #
+        # model_risk(wr,wt)
+        # #model_risk(wr,wt)
+        print("pp=",pp," ", wa, " ",ww, " ",wr, " ",age," ")
+        context = {
+            #'installations':installations,
+            'title': "About"
+        }
+
+        test_list = [int(i) for i in age]
+        errv_ages = tuple(test_list)
+
+
+        crush_prob_res = crush_prob(pp,errv_ages)
+        model2(ins_fix_list_g,flag_model4)
+        model3(ins_fix_list_g,flag_model4)
+        model4(ins_fix_list_g,flag_model4)
+        model5(ins_fix_list_g,wa,ww,wr)
+        #creation of map comes here + business logic
+        m = folium.Map([62.354457, 2.377184], zoom_start=6)
+
+        #Load Data
+        data = pd.read_csv('main\\recources\\Data_Map.txt')
+        lat = data['LAT']
+        lon = data['LON']
+        elevation = data['ELEV']
+        name = data['NAME']
+
+        #Function to change colors
+        def color_change(elev):
+            if(elev == 1 ):
+                return('blue')
+            elif(elev == 2):
+                return('yellow')
+            elif(elev == 3):
+                return('red')
+            elif(elev == 100):
+                return('purple')
+
+        #Function to change colors
+        def radius_change(elev):
+            if(elev == 3 ):
+                return 62050
+            elif(elev == 5):
+                return 124100
+            elif(elev == 6):
+                return 155125
+
+                #Function to change colors
+        def radius_size(elev):
+            if(elev == 1 ):
+                return 2
+            elif(elev == 2):
+                return 1
+            elif(elev == 3 or elev == 100):
+                return 3
+
+        data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
+        lat2 = data2['LAT']
+        lon2 = data2['LON']
+        elevation2 = data2['ELEV']
+
+        for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
+            folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='red',  fill_opacity = 0.05).add_to(m)
+
+        #Plot Markers
+        for lat, lon, elevation,name in zip(lat, lon, elevation,name):
+            folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(name), fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+
+        m=m._repr_html_() #updated
+
+
+        context = {
+            'installations': installations,
+            'error':error,
+            'my_map': m,
+            # 'errvs': errvs,
+            'title': "Multi-objective model"
+        }
+
+        return render(request,'main/multi2.html',context)
+    else:
+        context = {
+            'numner_vessels':list_numner_vessels,
+            'title': "Risk2"
+        }
+        return render(request,'main/multi2.html',context)
 
 def registerPage(request):
     if request.user.is_authenticated:

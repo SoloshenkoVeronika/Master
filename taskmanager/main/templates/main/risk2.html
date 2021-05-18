@@ -6,54 +6,69 @@
 
 
 {% block content %}
-    <form action="" method="post">
-        {% csrf_token %}
+    <div class="ui main text container">
+        <h1 class="ui header">!!!!!!!!!!!!!!!!!!!!!</h1>
 
-        <div class="ui main text container">
-            <h1 class="ui header">!!!!!!!!!!!!!!!!!!!!!</h1>
-            <form class="ui large form" method="post">
-                <div class="ui stacked segment">
-                    {% csrf_token %}
-                    <div class="two fields">
-                        <div class="field">
-                            <label>Risk weight</label>
-                            <input class="form-control" id="grid" type="text" name="wr"><br>
-                        </div>
-                        <div class="field">
-                            <label>Time weight</label>
-                            <input class="form-control" id="grid" type="text" name="wt"><br>
-                        </div>
-                    </div>
-                    <input type="submit" value="Get solution" class="positive ui button" name="average_time">
+    </div>
 
-                    <br>
-                    <span class="ui big red text">{{ error }}</span>
-                    <span class="ui big green text">{{ answer }}</span>
+    <form class="ui large form" method="post">
+        <div class="ui stacked segment">
+            {% csrf_token %}
+            <div class="two fields">
+                <div class="field">
+                    <label>Plan period</label>
+                    <input class="form-control" id="pp" placeholder="Plan period" type="text" name="pp"><br>
                 </div>
-            </form>
+            </div>
+            <br>
+            <h3>Age</h3>
+            <div class="two fields">
+                <div class="field">
+
+                    {% for i in numner_vessels %}
+
+                        <br><label>Age for ERRV </label><br>
+                        <input class="form-control" id="age" type="text" name="age">
+                    {% endfor %}
+                </div>
+            </div>
+            <input type="submit" value="Get solution" class="positive ui button" name="average_time">
+
+            <span class="ui big red text">{{ error }}</span>
+            <span class="ui big green text">{{ answer }}</span>
         </div>
+    </form>
+    {#    <form class="ui form" method = "GET">#}
+    {#        <div class="ui stacked segment">#}
+    {#            {% csrf_token %}#}
+    {#            <div class="ui form">#}
+    {#                <div class="field">#}
+    {#                    <label for="date_w" name="date_w">Name </label>#}
+    {#                    {{ form }}#}
+    {#                </div>#}
+    {#                <div class="field">#}
+    {#                    <label  name="period_name">Period </label>#}
+    {#                    <input class="form-control" id="grid" placeholder="Enter period, days" type="text" name="period"><br><br>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#        <input type="submit" value="Get solution" class="ui blue  button" name="average_time">#}
+    {##}
+    {#    </form>#}
 
-
-        <h1>Main</h1>
-        <p>Well!</p>
-    {% for el in nv %}
-        <label for="er">Pos: </label>
-        <input id="er" type="text" name="er"><br>
-        <p>sdf</p>
-    {% endfor %}
-
-{#        {% if errvs %}#}
-{#            {% for el in errvs %}#}
-{#                <div class="alert alert-warning mt-2">#}
-{#                    <h3>{{ el.errvs }}</h3>#}
-{#                    <p>{{ el.errvs }}</p>#}
-{#                    <p>{{ el.errvs }}</p>#}
-{#                </div>#}
-{#            {% endfor %}#}
-{#        {% else %}#}
-{#            <p>No</p>#}
-{#        {% endif %}#}
-
-
+    {#    <form class="ui form" method="post">#}
+    {#        <div class="ui stacked segment">#}
+    {#            {% csrf_token %}#}
+    {#            <div class="ui form">#}
+    {#                <div class="field">#}
+    {#                    <label for="date_w" name="date_w">Name </label>#}
+    {##}
+    {#                    {{ form.date }}#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#        <input type="submit" value="Get solution" class="ui blue  button" name="average_time">#}
+    {##}
+    {#    </form>#}
 {% endblock %}
 

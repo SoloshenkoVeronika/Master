@@ -1,7 +1,9 @@
 from .models import Installation,ERRV
-from django.forms import ModelForm, TextInput, Textarea, MultipleChoiceField, Select, CharField, ModelChoiceField
+from django.forms import ModelForm, TextInput, Textarea, MultipleChoiceField, Select, CharField, ModelChoiceField, forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django import forms
+from django.forms.widgets import NumberInput
 
 class CreateUserForm(UserCreationForm):
     class Meta:
@@ -68,3 +70,7 @@ class ERRVForm(ModelForm):
 
 
         }
+
+class ExampleForm(forms.Form):
+    date = forms.DateField(widget=NumberInput(attrs={'type': 'date'}))
+    # period = forms.TextInput(attrs={'class':'form-control' })
