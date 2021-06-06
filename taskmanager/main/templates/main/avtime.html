@@ -7,7 +7,7 @@
 
 {% block content %}
     <div class="ui main text container">
-        <h1 class="ui header">Least Total Time Coverage Problem</h1>
+        <h1 class="ui header">Least Total Time Covering Problem</h1>
         <form class="ui large form" method="post">
             <div class="ui stacked segment">
                 {% csrf_token %}
@@ -34,6 +34,32 @@
                         </label>
                         <input class="form-control" id="grid" placeholder="Enter grid size, km" type="text" name="grid"><br><br>
                     </div>
+
+                    <label>Choose a ERRV speed </label>
+
+{#                    <div class="form-check">#}
+{#                        <input class="form-check-input" type="radio" name="display_type" value="17">#}
+{#                        <label class="form-check-label" for="flexRadioDefault1">#}
+{#                           17#}
+{#                        </label>#}
+{#                    </div>#}
+{#                    <div class="form-check">#}
+{#                        <input class="form-check-input" type="radio" name="display_type" value="17">#}
+{#                        <label class="form-check-label" for="flexRadioDefault1">#}
+{#                            14#}
+{#                        </label>#}
+{#                    </div>#}
+{#                    <div class="form-check">#}
+{#                        <input class="form-check-input" type="radio" name="display_type" value="GR"#}
+{#                               checked>#}
+{#                        <label class="form-check-label" for="flexRadioDefault2">#}
+{#                            Calculate#}
+{#                        </label>#}
+{#                        <input class="form-control" id="grid" placeholder="Enter normal speed , knop" type="text" name="speedn"><br><br>#}
+{#                        <input class="form-control" id="grid" placeholder="Enter normal speed , knop" type="text" name="speeds"><br><br>#}
+{#                        <input class="form-control" id="grid" placeholder="Enter normal speed , knop" type="text" name="grid"><br><br>#}
+{#                        <input class="form-control" id="grid" placeholder="Enter normal speed , knop" type="text" name="grid"><br><br>#}
+{#                    </div>#}
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" name="ins_fix" value="F" id="exampleCheck1">
                         <label class="form-check-label" for="exampleCheck1">Fixed position</label>

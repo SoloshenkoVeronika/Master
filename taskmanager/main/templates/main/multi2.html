@@ -6,18 +6,16 @@
 
 
 {% block content %}
-    <form action="" method="post">
-    {% csrf_token %}
 
     <div class="ui main text container">
-        <h1 class="ui header">!!!!!!!!!!!!!!!!!!!!!</h1>
+        <h1 class="ui header">Multi-objective Covering Problem</h1>
         <form class="ui large form" method="post">
             <div class="ui stacked segment">
                 {% csrf_token %}
                 <div class="two fields">
                     <div class="field">
                         <label>Plan period</label>
-                        <input class="form-control" id="pp" placeholder="Plan period" type="text" name="pp"><br>
+                        <input class="form-control" id="pp" placeholder="Plan period (year)" type="text" name="pp"><br>
                     </div>
                 </div>
                 <br>
@@ -27,24 +25,26 @@
 
                         {% for i in numner_vessels %}
 
-                            <br><label>Age for ERRV </label><br>
-                            <input class="form-control" id="age" type="text" name="age">
+                            <label>Age for ERRV </label>
+                            <input class="form-control" id="age" placeholder="Age (year)" type="text" name="age">
+                            <br>
                         {% endfor %}
                     </div>
                 </div>
+            <br>
                 <h3>Weight</h3>
                 <div class="two fields">
                     <div class="field">
                         <label>Average weight</label>
-                        <input class="form-control" id="av" placeholder="Average weight" type="text" name="wa"><br>
+                        <input class="form-control" id="av" placeholder="Average weight (0.00-1.00)" type="text" name="wa"><br>
                     </div>
                     <div class="field">
                         <label>Worst weight</label>
-                        <input class="form-control" id="wr" placeholder="Worst weight" type="text" name="ww"><br>
+                        <input class="form-control" id="wr" placeholder="Worst weight (0.00-1.00)" type="text" name="ww"><br>
                     </div>
                     <div class="field">
                         <label>Risk weight</label>
-                        <input class="form-control" id="rs" placeholder="Risk weight" type="text" name="wr"><br>
+                        <input class="form-control" id="rs" placeholder="Risk weight (0.00-1.00)" type="text" name="wr"><br>
                     </div>
                 </div>
                 <input type="submit" value="Get solution" class="positive ui button" name="average_time">
@@ -55,28 +55,6 @@
             </div>
         </form>
     </div>
-
-
-    <h1>Main</h1>
-    <p>Well!</p>
-    {% for el in nv %}
-        <label for="er">Pos: </label>
-        <input id="er" type="text" name="er"><br>
-        <p>sdf</p>
-    {% endfor %}
-
-    {#        {% if errvs %}#}
-    {#            {% for el in errvs %}#}
-    {#                <div class="alert alert-warning mt-2">#}
-    {#                    <h3>{{ el.errvs }}</h3>#}
-    {#                    <p>{{ el.errvs }}</p>#}
-    {#                    <p>{{ el.errvs }}</p>#}
-    {#                </div>#}
-    {#            {% endfor %}#}
-    {#        {% else %}#}
-    {#            <p>No</p>#}
-    {#        {% endif %}#}
-
 
 {% endblock %}
 

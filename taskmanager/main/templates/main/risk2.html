@@ -7,37 +7,37 @@
 
 {% block content %}
     <div class="ui main text container">
-        <h1 class="ui header">!!!!!!!!!!!!!!!!!!!!!</h1>
+        <h1 class="ui header">Risk based Covering Problem</h1>
 
+
+        <form class="ui large form" method="post">
+            <div class="ui stacked segment">
+                {% csrf_token %}
+                <div class="two fields">
+                    <div class="field">
+                        <label>Plan period</label>
+                        <input class="form-control" id="pp" placeholder="Plan period" type="text" name="pp"><br>
+                    </div>
+                </div>
+                <br>
+                <h3>Age</h3>
+                <div class="two fields">
+                    <div class="field">
+
+                        {% for i in numner_vessels %}
+
+                            <br><label>Age for ERRV </label><br>
+                            <input class="form-control" id="age" type="text" name="age">
+                        {% endfor %}
+                    </div>
+                </div>
+                <input type="submit" value="Get solution" class="positive ui button" name="average_time">
+
+                <span class="ui big red text">{{ error }}</span>
+                <span class="ui big green text">{{ answer }}</span>
+            </div>
+        </form>
     </div>
-
-    <form class="ui large form" method="post">
-        <div class="ui stacked segment">
-            {% csrf_token %}
-            <div class="two fields">
-                <div class="field">
-                    <label>Plan period</label>
-                    <input class="form-control" id="pp" placeholder="Plan period" type="text" name="pp"><br>
-                </div>
-            </div>
-            <br>
-            <h3>Age</h3>
-            <div class="two fields">
-                <div class="field">
-
-                    {% for i in numner_vessels %}
-
-                        <br><label>Age for ERRV </label><br>
-                        <input class="form-control" id="age" type="text" name="age">
-                    {% endfor %}
-                </div>
-            </div>
-            <input type="submit" value="Get solution" class="positive ui button" name="average_time">
-
-            <span class="ui big red text">{{ error }}</span>
-            <span class="ui big green text">{{ answer }}</span>
-        </div>
-    </form>
     {#    <form class="ui form" method = "GET">#}
     {#        <div class="ui stacked segment">#}
     {#            {% csrf_token %}#}

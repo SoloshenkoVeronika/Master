@@ -21,5 +21,6 @@ urlpatterns = [
     path('update_errv/<str:pk>/', views.updateERRV, name="update_errv"),
     path('multi', views.multi, name='multi'),
     path('risk2', views.risk2, name='risk2'),
+    path('riskv2', views.riskv2, name='riskv2'),
 
 ]

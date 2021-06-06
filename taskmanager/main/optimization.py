@@ -82,13 +82,13 @@ def get_pot_position(grid):
     sw = shapely.geometry.Point((min_x, min_y))
     ne = shapely.geometry.Point((max_x, max_y))
 
-    print("grid_get =", grid)
+    #print("grid_get =", grid)
     grid1 = int(grid)*int(1000)
-    print("grid_get1 =", grid1)
+    #print("grid_get1 =", grid1)
     stepsize = grid1 # 5 km grid step size
 
     stepsizey = int(int(grid1)*2.4)
-    print("stepsizey2=",stepsizey)
+    #print("stepsizey2=",stepsizey)
     transformed_sw = pyproj.transform(outProj, inProj, sw.x, sw.y) # Transform NW point to 3857
     transformed_ne = pyproj.transform(outProj, inProj, ne.x, ne.y) # .. same for SE
 
@@ -154,7 +154,8 @@ def t_validate1(model, i,j):
         return 0
 
 def t_validate2(model, i,j):
-    if (int(model.distance_time[i,j]) <= model.arrive_time[i]):
+    #print(i," ",j,"distance_time =",float(model.distance_time[i,j]), "arrive_time=",float(model.arrive_time[i]))
+    if (float(model.distance_time[i,j]) <= float(model.arrive_time[i])):
         return 1
     else:
         return 0
@@ -227,6 +228,7 @@ def model1(grid,type_errv,ins_fix_list):
             #____________________________ Time 5
             # if (time==3):
             #     time = 5
+            #     time = time-1
             # else:
             #     time = p.get_r_time()-1
             #____________________________ Time 5
@@ -433,6 +435,7 @@ def model1(grid,type_errv,ins_fix_list):
 
 
 def model2(ins_fix_list,flag_model4):
+
     model = AbstractModel()
 
     model.INSTALLATION = Set()
@@ -457,7 +460,7 @@ def model2(ins_fix_list,flag_model4):
     model.y = Var(model.SITE, domain = Binary)
     model.x = Var(model.INSTALLATION,model.SITE, domain = Binary)
 
-
+    print("Model2")
     def obj_expression(model):
         return sum(model.distance_time[i,j]*model.x[i,j] for i in model.INSTALLATION for j in model.SITE)
 
@@ -480,10 +483,10 @@ def model2(ins_fix_list,flag_model4):
     model.con3 = Constraint(model.INSTALLATION,model.SITE,rule=Balance3)
 
     # ______________ -start- Only for installation as errv
-    if (ins_fix_list != 0):
-        def Balance_Fix(model):
-            return (model.y[str('ERRV_')+str(number_fix_errv)] == 1)
-        model.con4 = Constraint(rule=Balance_Fix)
+    # if (ins_fix_list != 0):
+    #     def Balance_Fix(model):
+    #         return (model.y[str('ERRV_')+str(number_fix_errv)] == 1)
+    #     model.con4 = Constraint(rule=Balance_Fix)
     # ______________ -end-
 
 
@@ -510,30 +513,6 @@ def model2(ins_fix_list,flag_model4):
 
     results = opt.solve(instance)
     instance.solutions.store_to(results)
-    # if (results.solver.status == SolverStatus.ok) and (results.solver.termination_condition == TerminationCondition.optimal):
-    #     print('___aa___')
-    #     for i in instance.INSTALLATION:
-    #         for j in instance.SITE:
-    #             print(instance.aa[i,j] ,end =" ")
-    #         print("")
-    #     print('___x___')
-    #     for i in instance.INSTALLATION:
-    #         for j in instance.SITE:
-    #             print(instance.x[i,j].value ,end =" ")
-    #         print("")
-    #     print('___y___')
-    #     for j in instance.SITE:
-    #         print('y[',j,']=' , instance.y[j].value)
-    #     print('___Total cost___')
-    #     print(value(instance.obj))
-    #     #print('Do something when the solution in optimal and feasible')
-    #
-    #
-    # elif (results.solver.termination_condition == TerminationCondition.infeasible):
-    #     print('Model is infeasible')
-    # else:
-    #     # Something else is wrong
-    #     print('Solver Status: ',  result.solver.status)
 
     full_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "recources")
     filename_results = "Model2t.sol"
@@ -577,7 +556,7 @@ def model2(ins_fix_list,flag_model4):
                     else:
                         fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                     fm.write("\n")
-                    #fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                    fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                     fmerrv.write("\n")
                     fmerrv.write(str(5)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                     fmerrv.write("\n")
@@ -653,10 +632,10 @@ def model3(ins_fix_list,flag_model4):
     model.con4 = Constraint(model.INSTALLATION,model.SITE,rule=Balance4)
 
     # ______________ -start- Only for installation as errv
-    if (ins_fix_list != 0):
-        def Balance_Fix(model):
-            return (model.y[str('ERRV_')+str(number_fix_errv)] == 1)
-        model.con5 = Constraint(rule=Balance_Fix)
+    # if (ins_fix_list != 0):
+    #     def Balance_Fix(model):
+    #         return (model.y[str('ERRV_')+str(number_fix_errv)] == 1)
+    #     model.con5 = Constraint(rule=Balance_Fix)
     # ______________ -end-
 
     # load data
@@ -684,25 +663,25 @@ def model3(ins_fix_list,flag_model4):
     #results.write()
     #instance.display()
 
-    # if (results.solver.status == SolverStatus.ok) and (results.solver.termination_condition == TerminationCondition.optimal):
-    #     print('___aa___')
-    #     for i in instance.INSTALLATION:
-    #         for j in instance.SITE:
-    #             print(instance.aa[i,j] ,end =" ")
-    #         print("")
-    #     print('___x___')
-    #     for i in instance.INSTALLATION:
-    #         for j in instance.SITE:
-    #             print(instance.x[i,j].value ,end =" ")
-    #         print("")
-    #     print('___y___')
-    #     for j in instance.SITE:
-    #         print('y[',j,']=' , instance.y[j].value)
-    #     print('___Total cost___')
-    #     print(value(instance.obj))
-    #     #print('Do something when the solution in optimal and feasible')
-    #
-    #
+    if (results.solver.status == SolverStatus.ok) and (results.solver.termination_condition == TerminationCondition.optimal):
+        print('___aa___')
+        for i in instance.INSTALLATION:
+            for j in instance.SITE:
+                print(i," ", j, " ",instance.aa[i,j] ,end =" ")
+            print("")
+        print('___x___')
+        for i in instance.INSTALLATION:
+            for j in instance.SITE:
+                print(instance.x[i,j].value ,end =" ")
+            print("")
+        print('___y___')
+        for j in instance.SITE:
+            print('y[',j,']=' , instance.y[j].value)
+        print('___Total cost___')
+        print(value(instance.obj))
+        #print('Do something when the solution in optimal and feasible')
+
+
     # elif (results.solver.termination_condition == TerminationCondition.infeasible):
     #     print('Model is infeasible')
     # else:
@@ -716,7 +695,7 @@ def model3(ins_fix_list,flag_model4):
     FileFullPathResults = os.path.join(full_path, filename_results)
     sum_time = 0.0
     with open(FileFullPathResults, 'w') as f:
-        f.write("Total cost="+str(value(instance.obj))+"\n")
+        f.write("Total cost==="+str(value(instance.obj))+"\n")
         for i in instance.INSTALLATION:
             for j in instance.SITE:
                sum_time += instance.distance_time[i,j]*instance.x[i,j].value
@@ -768,7 +747,7 @@ def model3(ins_fix_list,flag_model4):
                     else:
                         fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                     fm.write("\n")
-                    #fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                    fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                     fmerrv.write("\n")
                     fmerrv.write(str(5)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                     fmerrv.write("\n")
@@ -800,7 +779,7 @@ def model3(ins_fix_list,flag_model4):
     # errvs = ERRV.objects.order_by('id')
 
 def model4(ins_fix_list,flag_model4):
-    print("RISR Model 4")
+    print("RISK Model 4")
     model = AbstractModel()
 
     model.INSTALLATION = Set()
@@ -937,7 +916,7 @@ def model4(ins_fix_list,flag_model4):
                         else:
                             fm.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                         fm.write("\n")
-                        #fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
+                        fmerrv.write(str(3)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                         fmerrv.write("\n")
                         fmerrv.write(str(5)+", "+str(instance.xcord_s[j])+ ", "+str(instance.ycord_s[j]))
                         fmerrv.write("\n")
@@ -954,11 +933,11 @@ def model4(ins_fix_list,flag_model4):
     #____________end  .dat file for multi (model4)__________
 
 
-    ERRV.objects.filter(type_solution=202).delete()
+    ERRV.objects.filter(type_solution=204).delete()
     for j in instance.SITE:
         for v in instance.VESSELS:
             if(instance.y[j,v].value==1):
-                errv = ERRV(title="TT_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=202)
+                errv = ERRV(title="Risk_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=204)
                 errv.save()
 
     print('Done4')
@@ -1169,11 +1148,11 @@ def model5(ins_fix_list,wa,ww,wr):
                     fmerrv.write("\n")
                     f.write("\n")
                 number_errv+=1
-    ERRV.objects.filter(type_solution=204).delete()
+    ERRV.objects.filter(type_solution=205).delete()
     for j in instance.SITE:
         for v in instance.VESSELS:
             if(instance.y[j,v].value==1):
-                errv = ERRV(title="Multi_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=204)
+                errv = ERRV(title="Multi_" +str(j), latitude=instance.xcord_s[j],longitude=instance.ycord_s[j],prob=0.0,type_solution=205)
                 errv.save()
 
 

@@ -78,6 +78,8 @@
 
                                 {% if 201.0 == errv.type_solution   %}
                                     Current positions
+                                {% elif 202.0 == errv.type_solution or 203.0 == errv.type_solution or 204.0 == errv.type_solution or 205.0 == errv.type_solution %}
+                                    Solution position
                                 {% else %}
                                     Potential position
                                 {% endif %}
@@ -114,8 +116,9 @@
                     <i class="circle icon" style="color: #fcffd0"></i>Potential ERRV<br>
                     <i class="circle icon" style="color: #ff7a2f"></i>Soulution "Total time"<br>
                     <i class="circle icon" style="color: #55cb68"></i>Soulution "Worst time"<br>
-                    <i class="circle icon" style="color: #f8b5f5"></i>Soulution "Multi"<br>
                     <i class="circle icon" style="color: #bf6bc7"></i>Soulution "Risk"<br>
+                    <i class="circle icon" style="color: #f8b5f5"></i>Soulution "Multi"<br>
+
                 </p>
                 </div>
             </div>

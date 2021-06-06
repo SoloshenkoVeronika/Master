@@ -84,6 +84,7 @@ def about(request):
             errvs = ERRV.objects.filter(id=int(x))
 
     errvs= ERRV.objects.filter(type_solution__in=[201,210,202,203,204,205])
+    print("errvs=",errvs)
     #errvs = ERRV.objects.order_by('id')
     # print("Delete=",request.GET.get('DeleteButton'))
     if (request.GET.get('DeleteButtonI')):
@@ -111,17 +112,17 @@ def about(request):
     #Function to change colors
     def color_change(elev):
         if(elev == 1 ):
-            return('#3f7fff')
+            return('#3f7fff') #0017ff  3f7fff
         elif(elev == 201):
             return('#ffda25')
         elif(elev == 202):
-            return('#ff7a2f')
+            return('#ff7a2f') #ff7a2f
         elif(elev == 203):
-            return('#55cb68')
+            return('#55cb68') #55cb68
         elif(elev == 204):
-            return('#f8b5f5')
-        elif(elev == 205):
             return('#bf6bc7')
+        elif(elev == 205):
+            return('#f8b5f5')
         elif(elev == 210):
             return('#fcffd0')
 
@@ -131,29 +132,46 @@ def about(request):
     elev_list_errv = []
     name_list_errv = []
     for e in ERRV.objects.all():
+        lat_list_errv.append(e.latitude)
+        lon_list_errv.append(e.longitude)
+        name_list_errv.append(e.title)
         if(e.type_solution == 201.0):
-            lat_list_errv.append(e.latitude)
-            lon_list_errv.append(e.longitude)
-            name_list_errv.append(e.title)
-            if(e.type_solution == 201.0):
-                elev_list_errv.append(201)
-            elif (e.type_solution == 210.0):
-                elev_list_errv.append(210)
-            elif (e.type_solution == 202.0):
+            elev_list_errv.append(201)
+        elif (e.type_solution == 210.0):
+              elev_list_errv.append(210)
+        elif (e.type_solution == 202.0):
                 elev_list_errv.append(202)
-            elif (e.type_solution == 203.0):
+        elif (e.type_solution == 203.0):
                 elev_list_errv.append(203)
-            elif (e.type_solution == 204.0):
+        elif (e.type_solution == 204.0):
                 elev_list_errv.append(204)
-            elif (e.type_solution == 205.0):
+        elif (e.type_solution == 205.0):
                 elev_list_errv.append(205)
 
     lat_errv = pd.Series(lat_list_errv)
     lon_errv = pd.Series(lon_list_errv)
     elevation_errv = pd.Series(elev_list_errv)
     name_errv = pd.Series(name_list_errv)
+    # _____________ Circle____________________
+    data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
+    lat2 = data2['LAT']
+    lon2 = data2['LON']
+    elevation2 = data2['ELEV']
 
-    #Plot Markers
+    # Function to change colors
+    # def radius_change(elev):
+    #     if(elev == 3 ):
+    #         return 62050
+    #     elif(elev == 5):
+    #         return 124100
+    #     elif(elev == 6):
+    #         return 155125
+    #
+    # for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
+    #     folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), fill_color='red',  fill_opacity = 0.05).add_to(m)
+    # _____________ Circle____________________
+
+#Plot Markers
     for lat, lon, elevation, name_inst in zip(lat_inst, lon_inst, elevation_inst,name_inst):
         folium.CircleMarker(location=[lat, lon], radius = 5, popup=str(name_inst), fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 1).add_to(m)
 
@@ -655,70 +673,70 @@ def risk2(request):
 
         crush_prob_res = crush_prob(pp,errv_ages)
         model4(ins_fix_list_g,flag_model4)
-        #
-        # #creation of map comes here + business logic
-        # m = folium.Map([62.354457, 2.377184], zoom_start=6)
-        #
-        # #Load Data
-        # data = pd.read_csv('main\\recources\\Data_Map.txt')
-        # lat = data['LAT']
-        # lon = data['LON']
-        # elevation = data['ELEV']
-        # name = data['NAME']
-        #
-        # #Function to change colors
-        # def color_change(elev):
-        #     if(elev == 1 ):
-        #         return('blue')
-        #     elif(elev == 2):
-        #         return('yellow')
-        #     elif(elev == 3):
-        #         return('red')
-        #     elif(elev == 100):
-        #         return('purple')
-        #
-        # #Function to change colors
-        # def radius_change(elev):
-        #     if(elev == 3 ):
-        #         return 62050
-        #     elif(elev == 5):
-        #         return 124100
-        #     elif(elev == 6):
-        #         return 155125
-        #
-        #         #Function to change colors
-        # def radius_size(elev):
-        #     if(elev == 1 ):
-        #         return 2
-        #     elif(elev == 2):
-        #         return 1
-        #     elif(elev == 3 or elev == 100):
-        #         return 3
-        #
-        # data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
-        # lat2 = data2['LAT']
-        # lon2 = data2['LON']
-        # elevation2 = data2['ELEV']
-        #
-        # for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
-        #     folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='red',  fill_opacity = 0.05).add_to(m)
-        #
-        # #Plot Markers
-        # for lat, lon, elevation,name in zip(lat, lon, elevation,name):
-        #     folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(name), fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
-        #
-        # m=m._repr_html_() #updated
+
+        #creation of map comes here + business logic
+        m = folium.Map([62.354457, 2.377184], zoom_start=6)
+
+        #Load Data
+        data = pd.read_csv('main\\recources\\Data_Map.txt')
+        lat = data['LAT']
+        lon = data['LON']
+        elevation = data['ELEV']
+        name = data['NAME']
+
+        #Function to change colors
+        def color_change(elev):
+            if(elev == 1 ):
+                return('blue')
+            elif(elev == 2):
+                return('yellow')
+            elif(elev == 3):
+                return('red')
+            elif(elev == 100):
+                return('purple')
+
+        #Function to change colors
+        def radius_change(elev):
+            if(elev == 3 ):
+                return 62050
+            elif(elev == 5):
+                return 124100
+            elif(elev == 6):
+                return 155125
+
+                #Function to change colors
+        def radius_size(elev):
+            if(elev == 1 ):
+                return 2
+            elif(elev == 2):
+                return 1
+            elif(elev == 3 or elev == 100):
+                return 3
+
+        data2 = pd.read_csv("main\\recources\\Data_Map_ERRV.txt")
+        lat2 = data2['LAT']
+        lon2 = data2['LON']
+        elevation2 = data2['ELEV']
+
+        for lat2, lon2, elevation2 in zip(lat2, lon2, elevation2):
+            folium.Circle(location=[lat2, lon2], radius = radius_change(elevation2), popup=str(elevation2)+" m", fill_color='red',  fill_opacity = 0.05).add_to(m)
+
+        #Plot Markers
+        for lat, lon, elevation,name in zip(lat, lon, elevation,name):
+            folium.CircleMarker(location=[lat, lon], radius = radius_size(elevation), popup=str(name), fill_color=color_change(elevation),color=color_change(elevation),  fill_opacity = 0.9).add_to(m)
+
+        m=m._repr_html_() #updated
 
 
         context = {
             'installations': installations,
             'error':error,
-            # 'my_map': m,
+            'my_map': m,
             # 'errvs': errvs,
-            'title': "Multi-objective model"
+            'title': "Risk based model"
         }
 
-        return render(request,'main/risk2.html',context)
+        return render(request,'main/risk.html',context)
     else:
         context = {
             'numner_vessels':list_numner_vessels,
@@ -833,6 +851,7 @@ def multi2(request):
 
         crush_prob_res = crush_prob(pp,errv_ages)
         model2(ins_fix_list_g,flag_model4)
+        print("________________))))))))))))))))+++++++++++++++_____________(((((((((((((()))))))0")
         model3(ins_fix_list_g,flag_model4)
         model4(ins_fix_list_g,flag_model4)
         model5(ins_fix_list_g,wa,ww,wr)
@@ -898,11 +917,11 @@ def multi2(request):
             'title': "Multi-objective model"
         }
 
-        return render(request,'main/multi2.html',context)
+        return render(request,'main/multi.html',context)
     else:
         context = {
             'numner_vessels':list_numner_vessels,
-            'title': "Risk2"
+            'title': "Multi-objective model"
         }
         return render(request,'main/multi2.html',context)
 
@@ -1088,3 +1107,8 @@ def map(request):
     #
     # #return render(request, 'polls/show_folium_map.html', context)
     # return render(request,'main/map.html',context)
+
+@login_required(login_url='login')
+def riskv2(request):
+    print("Riskv2")
+    return render(request,'main/riskv2.html')
